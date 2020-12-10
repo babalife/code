@@ -62,13 +62,17 @@
                     {key: 'path', align: 'center', title: '路径'},
                     {
                         key: 'sort', title: '排序', align: 'center', width: '50px', template: function (item) {
-                            return '<input class="layui-input" autocomplete="off" type="number" min="0" max="254" name="edit" value="' + item.id + '" lay-event="edit"/>';
+                            return '<input class="layui-input" autocomplete="off" type="number" min="0" max="254" name="edit" value="' + item.sort + '" lay-event="edit"/>';
                         }
                     },
                     {
                         title: '状态', width: '100px', align: 'center',
                         template: function (item) {
-                            return '<input type="checkbox" lay-filter="sexDemo" name="status" lay-skin="switch" lay-text="ON|OFF">';
+                            if (item.status === 1){
+                                return '<input type="checkbox" lay-filter="sexDemo" name="status" lay-skin="switch" lay-text="ON|OFF" checked>';
+                            }else{
+                                return '<input type="checkbox" lay-filter="sexDemo" name="status" lay-skin="switch" lay-text="ON|OFF">';
+                            }
                         }
                     },
                     {
