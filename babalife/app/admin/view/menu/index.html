@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="__STATIC__/layuiadmin/style/admin.css" media="all">
     <style>
         input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button{
+        input::-webkit-inner-spin-button {
             -webkit-appearance: none !important;
             margin: 0;
         }
@@ -43,25 +43,25 @@
         base: '__STATIC__/layuiadmin/' //静态资源所在路径
     }).extend({
         index: 'lib/index' //主入口模块
-    }).use(['index', 'table', 'treeTable'], function () {
+    }).use(['index','table', 'treeTable'], function () {
         var $ = layui.$
             , form = layui.form
             , treeTable = layui.treeTable;
 
         $.get('/admin/menu/list').then(res => {
-            va = treeTable.render({
+            treeTable.render({
                 elem: '#tree-table',
-                data: res.data,
+                data: res.data.data,
                 icon_key: 'name',
                 end: function (e) {
                     form.render();
                 },
                 cols: [
-                    {key: 'name',  title: '名称'},
+                    {key: 'name', title: '名称'},
                     {key: 'icon', align: 'center', title: '图标'},
                     {key: 'path', align: 'center', title: '路径'},
                     {
-                        key: 'sort', title: '排序',  align: 'center', width: '50px', template: function (item) {
+                        key: 'sort', title: '排序', align: 'center', width: '50px', template: function (item) {
                             return '<input class="layui-input" autocomplete="off" type="number" min="0" max="254" name="edit" value="' + item.id + '" lay-event="edit"/>';
                         }
                     },
@@ -74,11 +74,10 @@
                     {
                         title: '操作', align: 'center', width: '200px',
                         template: function (item) {
-                            return `
-                <a class="layui-btn layui-btn-success layui-btn-xs" lay-filter="add"><i class="layui-icon layui-icon-add-1"></i>添加</a>
-                <a class="layui-btn layui-btn-normal layui-btn-xs"  lay-filter="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
-                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-filter="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
-              `;
+                            return `<a class="layui-btn layui-btn-success layui-btn-xs" lay-filter="add"><i class="layui-icon layui-icon-add-1"></i>添加</a>
+                                    <a class="layui-btn layui-btn-normal layui-btn-xs"  lay-filter="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+                                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-filter="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+                                   `;
                         }
                     }
                 ]
@@ -87,12 +86,31 @@
 
 
         // 打开菜单 add 页面
-        // treeTable.on('tree(add)',function(data){
-        //     layer.msg(JSON.stringify(data));
-        // });
+        treeTable.on('tree(add)', function (data) {
+            layer.msg('添加' + data.item.id)
+        });
+
+        treeTable.on('tree(edit)', function (data) {
+            layer.msg('编辑' + data.item.id);
+        });
+
+        treeTable.on('tree(del)', function (data) {
+            layer.confirm('确定删除吗？',{icon:2, title: '警告'}, function (index) {
+
+                //执行 Ajax 后重载
+                /*
+                admin.req({
+                  url: 'xxx'
+                  //,……
+                });
+                */
+                form.render();
+                layer.msg('已删除');
+            });
+        });
 
         // 修改菜单状态 update 请求
-        form.on('switch(sexDemo)',function(data){
+        form.on('switch(sexDemo)', function (data) {
             layer.msg('：' + data.elem.checked);
         });
 
@@ -113,18 +131,7 @@
                 }, function (value, index) {
                     layer.close(index);
 
-                    layer.confirm('确定删除吗？', function (index) {
 
-                        //执行 Ajax 后重载
-                        /*
-                        admin.req({
-                          url: 'xxx'
-                          //,……
-                        });
-                        */
-                        table.reload('LAY-user-manage');
-                        layer.msg('已删除');
-                    });
                 });
             }
             , add: function () {

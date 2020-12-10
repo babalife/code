@@ -3,9 +3,11 @@
 
 namespace app\admin\controller;
 
-// 菜单管理控制器
+use app\admin\validate\Menu as MenuValidate;
 use app\common\basic\Result;
+use app\admin\business\Menu as MenuBus;
 
+// 菜单管理控制器
 class Menu extends BaseAuth
 {
     //页面渲染
@@ -17,25 +19,46 @@ class Menu extends BaseAuth
     //列表数据
     public function list()
     {
-        $data = [
-            ['id' => 1, 'pid' => 0, 'name' => '张三', 'icon' => 'add-1', 'path' => '/admin/index', 'status' => 1, 'sort' => 11],
-            ['id' => 2, 'pid' => 0, 'name' => '啊', 'icon' => 'add-1', 'path' => '/admin/index', 'status' => 1, 'sort' => 22],
-            ['id' => 3, 'pid' => 1, 'name' => '鹅鹅鹅', 'icon' => 'add-1', 'path' => '/admin/index', 'status' => 1, 'sort' => 33],
-            ['id' => 4, 'pid' => 2, 'name' => 'www', 'icon' => 'add-1', 'path' => '/admin/index', 'status' => 1, 'sort' => 44]
-        ];
-        return Result::success($data);
+        $lists = (new MenuBus())->getMenuLists();
+        if ($lists) {
+            return Result::success($lists);
+        }
+
+        return Result::error('获取失败');
     }
 
     // 新增
     public function save()
     {
-        return 'save';
+        $data = input('post.');
+
+        $validate = new MenuValidate();
+        if (!$validate->scene('save')->check($data)) {
+            return Result::error($validate->getError());
+        }
+
+        $result = (new MenuBus())->insertDate($data);
+        if ($result) {
+            return Result::success([], '新增成功');
+        }
+
+        return Result::error('新增失败');
     }
 
     // 编辑
     public function edit($id)
     {
-        return 'edit' . $id;
+        $validate = new MenuValidate();
+        if (!$validate->scene('edit')->check(['id' => $id])) {
+            return Result::error($validate->getError());
+        }
+
+        $menuInfo = (new MenuBus())->getMenuById($id);
+        if ($menuInfo) {
+            return Result::success($menuInfo);
+        }
+
+        return Result::error('获取失败');
     }
 
     // 更新
