@@ -5,14 +5,15 @@ use app\BaseController;
 
 class Index extends Base
 {
+    // iframe全局页面
     public function index()
     {
-        session('test', '123');
-        return 'admin';
+        return view();
     }
 
-    public function hello($name = 'ThinkPHP6')
+    // 控制面板
+    public function dashboard()
     {
-        return 'hello,' . $name;
+        return view();
     }
 }

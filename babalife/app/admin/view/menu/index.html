@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layuiAdmin 网站用户</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="__STATIC__/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__STATIC__/layuiadmin/style/admin.css" media="all">
+    <style>
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button{
+            -webkit-appearance: none !important;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div style="padding-bottom: 10px;">
+                <button class="layui-btn layuiadmin-btn-useradmin" data-type="add">添加</button>
+            </div>
+
+            <table class="layui-table layui-form" id="tree-table" lay-filter="tree-table"></table>
+            <script type="text/html" id="table-useradmin-webuser">
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i
+                        class="layui-icon layui-icon-edit"></i>编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i
+                        class="layui-icon layui-icon-delete"></i>删除</a>
+            </script>
+        </div>
+    </div>
+</div>
+
+<script src="__STATIC__/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '__STATIC__/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'table', 'treeTable'], function () {
+        var $ = layui.$
+            , form = layui.form
+            , treeTable = layui.treeTable;
+
+        $.get('/admin/menu/list').then(res => {
+            va = treeTable.render({
+                elem: '#tree-table',
+                data: res.data,
+                icon_key: 'name',
+                end: function (e) {
+                    form.render();
+                },
+                cols: [
+                    {key: 'name',  title: '名称'},
+                    {key: 'icon', align: 'center', title: '图标'},
+                    {key: 'path', align: 'center', title: '路径'},
+                    {
+                        key: 'sort', title: '排序',  align: 'center', width: '50px', template: function (item) {
+                            return '<input class="layui-input" autocomplete="off" type="number" min="0" max="254" name="edit" value="' + item.id + '" lay-event="edit"/>';
+                        }
+                    },
+                    {
+                        title: '状态', width: '100px', align: 'center',
+                        template: function (item) {
+                            return '<input type="checkbox" lay-filter="sexDemo" name="status" lay-skin="switch" lay-text="ON|OFF">';
+                        }
+                    },
+                    {
+                        title: '操作', align: 'center', width: '200px',
+                        template: function (item) {
+                            return `
+                <a class="layui-btn layui-btn-success layui-btn-xs" lay-filter="add"><i class="layui-icon layui-icon-add-1"></i>添加</a>
+                <a class="layui-btn layui-btn-normal layui-btn-xs"  lay-filter="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-filter="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+              `;
+                        }
+                    }
+                ]
+            });
+        })
+
+
+        // 打开菜单 add 页面
+        // treeTable.on('tree(add)',function(data){
+        //     layer.msg(JSON.stringify(data));
+        // });
+
+        // 修改菜单状态 update 请求
+        form.on('switch(sexDemo)',function(data){
+            layer.msg('：' + data.elem.checked);
+        });
+
+
+        //事件
+        var active = {
+            batchdel: function () {
+                var checkStatus = table.checkStatus('LAY-user-manage')
+                    , checkData = checkStatus.data; //得到选中  的数据
+
+                if (checkData.length === 0) {
+                    return layer.msg('请选择数据');
+                }
+
+                layer.prompt({
+                    formType: 1
+                    , title: '敏感操作，请验证口令'
+                }, function (value, index) {
+                    layer.close(index);
+
+                    layer.confirm('确定删除吗？', function (index) {
+
+                        //执行 Ajax 后重载
+                        /*
+                        admin.req({
+                          url: 'xxx'
+                          //,……
+                        });
+                        */
+                        table.reload('LAY-user-manage');
+                        layer.msg('已删除');
+                    });
+                });
+            }
+            , add: function () {
+                layer.open({
+                    type: 2
+                    , title: '添加用户'
+                    , content: 'userform.html'
+                    , maxmin: true
+                    , area: ['500px', '450px']
+                    , btn: ['确定', '取消']
+                    , yes: function (index, layero) {
+                        var iframeWindow = window['layui-layer-iframe' + index]
+                            , submitID = 'LAY-user-front-submit'
+                            , submit = layero.find('iframe').contents().find('#' + submitID);
+
+                        //监听提交
+                        iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                            var field = data.field; //获取提交的字段
+
+                            //提交 Ajax 成功后，静态更新表格中的数据
+                            //$.ajax({});
+                            table.reload('LAY-user-front-submit'); //数据刷新
+                            layer.close(index); //关闭弹层
+                        });
+
+                        submit.trigger('click');
+                    }
+                });
+            }
+        };
+
+    });
+</script>
+</body>
+</html>

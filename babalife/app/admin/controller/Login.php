@@ -3,11 +3,12 @@
 
 namespace app\admin\controller;
 
-
-class Demo extends BaseAuth
+//登录
+class Login extends Base
 {
     public function index()
     {
-        return 'is login';
+        return view();
     }
+
 }

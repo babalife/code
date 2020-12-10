@@ -12,14 +12,19 @@ class BaseAuth extends Base
     protected function initialize()
     {
         if (!$this->isLogin()){
-            redirect(url('/admin/index'))->send();
+            redirect(url('/admin/login/index'))->send();
         }
     }
 
     // 是否登录
     public function isLogin(){
-        $user = session('admin_user');
 
+        // 本地调试模式，线上.dev设置为 false
+        if (env('APP_DEBUG', false)){
+            return true;
+        }
+
+        $user = session('admin_user');
         if ($user && $user['id']) {
             $this->user = $user;
             return true;
