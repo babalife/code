@@ -29,6 +29,6 @@ class Menu extends Validate
     //校验条件
     protected $scene = [
         'save' => ['name', 'path', 'sort', 'pid'],
-        'edit' => ['id']
+        'id' => ['id']
     ];
 }

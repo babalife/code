@@ -49,4 +49,16 @@ class Menu extends BaseBus
 
         return $menu;
     }
+
+    // 指定id删除
+    public function delMenuById($id)
+    {
+        try {
+            $result = $this->model->where('id', $id)->delete();
+        } catch (\Exception $e) {
+            $result = false;
+        }
+
+        return $result;
+    }
 }

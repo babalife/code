@@ -53,10 +53,11 @@
                 elem: '#tree-table',
                 data: res.data.data,
                 icon_key: 'name',
-                end: function (e) {
-                    form.render();
-                },
+                // end: function (e) {
+                //     form.render();
+                // },
                 cols: [
+                    {key: 'id', title: '编号'},
                     {key: 'name', title: '名称'},
                     {key: 'icon', align: 'center', title: '图标'},
                     {key: 'path', align: 'center', title: '路径'},
@@ -108,8 +109,20 @@
                   //,……
                 });
                 */
-                form.render();
-                layer.msg('已删除');
+                $.ajax({
+                    url: '/admin/menu/' + data.item.id,
+                    type: 'delete',
+                    success: function(res){
+                        if (res.code === 0) {
+                            form.reload('tree-table');
+                        }
+
+                    }
+                })
+
+                form.render(); //数据刷新
+                layer.close(index); //关闭弹层
+
             });
         });
 

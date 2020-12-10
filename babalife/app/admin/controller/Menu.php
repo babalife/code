@@ -49,7 +49,7 @@ class Menu extends BaseAuth
     public function edit($id)
     {
         $validate = new MenuValidate();
-        if (!$validate->scene('edit')->check(['id' => $id])) {
+        if (!$validate->scene('id')->check(['id' => $id])) {
             return Result::error($validate->getError());
         }
 
@@ -65,6 +65,22 @@ class Menu extends BaseAuth
     public function update($id)
     {
         return 'update' . $id;
+    }
+
+    //删除
+    public function delete($id)
+    {
+        $validate = new MenuValidate();
+        if (!$validate->scene('id')->check(['id' => $id])) {
+            return Result::error($validate->getError());
+        }
+
+        $result = (new MenuBus())->delMenuById($id);
+        if ($result) {
+            return Result::success([], '删除成功');
+        }
+
+        return Result::error('删除失败');
     }
 
 }
