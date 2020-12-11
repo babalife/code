@@ -33,12 +33,14 @@
                     </dl>
                 </li>
                 {else /}
+                    {if $vo.pid == 0}
                     <li data-name="console" class="layui-nav-item">
                         <a lay-href="{$vo.path}">
                             <i class="layui-icon {$vo.icon}"></i>
                             <cite>{$vo.name}</cite>
                         </a>
                     </li>
+                    {/if}
                 {/present}
             {/foreach}
         </ul>

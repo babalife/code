@@ -16,6 +16,7 @@ class Menu extends BaseAuth
         return view();
     }
 
+
     // 编辑界面渲染
     public function menuform()
     {
