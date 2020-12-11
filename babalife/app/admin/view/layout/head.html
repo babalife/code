@@ -33,7 +33,13 @@
         </a>
         <dl class="layui-nav-child">
             {volist name="$headInfo.menu" id="item"}
-            <dd><a lay-href="{$item.path}">{$item.name}</a></dd>
+                {present name="item.top_line"}
+                <hr>
+                {/present}
+                <dd><a lay-href="{$item.path}">{$item.name}</a></dd>
+                {present name="item.bottom_line"}
+                <hr>
+                {/present}
             {/volist}
         </dl>
     </li>

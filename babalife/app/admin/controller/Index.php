@@ -12,6 +12,7 @@ class Index extends BaseAuth
     {
         // 默认数据
         $homeInfo = [
+            'adminName' => '后台管理系统',
             'name' => '控制面板',
             'href' => '/admin/index/dashboard'
         ];
@@ -20,11 +21,11 @@ class Index extends BaseAuth
         $headInfo = [
             // 管理员名称
             'name' => $this->user['name'],
-            // 菜单
+            // 菜单，可设置上下分割线，top_line/bottom_line
             'menu' => [
-                ['name' => '基本资料','path'=> '/admin/user/index'],
-                ['name' => '菜单管理','path'=> '/admin/menu/index'],
-                ['name' => '退出','path'=> '/admin/logout/index'],
+                ['name' => '基本资料', 'path' => '/admin/user/index'],
+                ['name' => '菜单管理', 'path' => '/admin/menu/index'],
+                ['name' => '退出', 'path' => '/admin/logout/index', 'top_line' => true],
             ]
         ];
 
