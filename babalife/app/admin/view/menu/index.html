@@ -38,7 +38,8 @@
     layui.config({
         base: '__STATIC__/layuiadmin/' //静态资源所在路径
     }).extend({
-        index: 'lib/index' //主入口模块
+        index: 'lib/index', //主入口模块
+        treeTable: '{/}__STATIC__/layuiadmin/lib/extend/treeTable'
     }).use(['index', 'table', 'treeTable', 'laypage'], function () {
         var $ = layui.$
             , form = layui.form
@@ -54,58 +55,68 @@
         // 加载列表数据
         function loadData() {
             $.get('/admin/menu/list?page=' + page).then(res => {
-                laypage.render({
-                    elem: 'page' //注意，这里的 test1 是 ID，不用加 # 号
-                    , count: res.data.total //数据总数，从服务端得到
-                    , limit: res.data.per_page
-                    , curr: page,
-                    jump: function (obj, first) {
-                        if (!first) {
-                            page = obj.curr;
-                            loadData(obj.curr);
+                if (res.code === 0) {
+                    // 渲染分页
+                    laypage.render({
+                        elem: 'page' //注意，这里的 test1 是 ID，不用加 # 号
+                        , count: res.data.total //数据总数，从服务端得到
+                        , limit: res.data.per_page
+                        , curr: page,
+                        jump: function (obj, first) {
+                            if (!first) {
+                                page = obj.curr;
+                                loadData(obj.curr);
+                            }
                         }
-                    }
-                });
+                    });
 
-                treeTable.render({
-                    elem: '#tree-table',
-                    data: res.data.data,
-                    icon_key: 'name',
-                    hide_class: 'layui-hide',
-                    end: function (e) {
-                        form.render();
-                    },
-                    cols: [
-                        // {key: 'id', title: '编号'},
-                        {key: 'name', title: '名称'},
-                        {key: 'icon', align: 'center', title: '图标'},
-                        {key: 'path', align: 'center', title: '路径'},
-                        {
-                            key: 'sort', title: '排序', align: 'center', width: '50px', template: function (item) {
-                                return '<input class="layui-input menu-sort" data-id="' + item.id + '" autocomplete="off" type="number" min="0" max="254" name="edit" value="' + item.sort + '" lay-filter="sort"/>';
-                            }
+                    // 渲染数据
+                    treeTable.render({
+                        elem: '#tree-table',
+                        data: res.data.data,
+                        icon_key: 'name',
+                        hide_class: 'layui-hide',
+                        end: function (e) {
+                            form.render();
                         },
-                        {
-                            title: '状态', width: '100px', align: 'center',
-                            template: function (item) {
-                                if (item.status === 1) {
-                                    return '<input type="checkbox" lay-filter="status" data-id="' + item.id + '" name="status" lay-skin="switch" lay-text="ON|OFF" checked>';
-                                } else {
-                                    return '<input type="checkbox" lay-filter="status" data-id="' + item.id + '" name="status" lay-skin="switch" lay-text="ON|OFF">';
+                        cols: [
+                            // {key: 'id', title: '编号'},
+                            {key: 'name', title: '名称'},
+                            {
+                                key: 'icon', align: 'center', title: '图标', template: function (item) {
+                                    if (item.icon){
+                                        return '<i class="layui-icon ' + item.icon + '"></i>';
+                                    }
                                 }
-                            }
-                        },
-                        {key: 'update_time', align: 'center', title: '更新时间', width: '150px'},
-                        {
-                            title: '操作', align: 'center', width: '150px',
-                            template: function (item) {
-                                return `<a class="layui-btn layui-btn-normal layui-btn-xs"  lay-filter="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+                            },
+                            {key: 'path', align: 'center', title: '路径'},
+                            {
+                                key: 'sort', title: '排序', align: 'center', width: '50px', template: function (item) {
+                                    return '<input class="layui-input menu-sort" data-id="' + item.id + '" autocomplete="off" type="number" min="0" max="254" name="edit" value="' + item.sort + '" lay-filter="sort"/>';
+                                }
+                            },
+                            {
+                                title: '状态', width: '100px', align: 'center',
+                                template: function (item) {
+                                    if (item.status === 1) {
+                                        return '<input type="checkbox" lay-filter="status" data-id="' + item.id + '" name="status" lay-skin="switch" lay-text="ON|OFF" checked>';
+                                    } else {
+                                        return '<input type="checkbox" lay-filter="status" data-id="' + item.id + '" name="status" lay-skin="switch" lay-text="ON|OFF">';
+                                    }
+                                }
+                            },
+                            {key: 'update_time', align: 'center', title: '更新时间', width: '150px'},
+                            {
+                                title: '操作', align: 'center', width: '150px',
+                                template: function (item) {
+                                    return `<a class="layui-btn layui-btn-normal layui-btn-xs"  lay-filter="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
                                     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-filter="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
                                    `;
+                                }
                             }
-                        }
-                    ]
-                });
+                        ]
+                    });
+                }
             })
         }
 
@@ -161,18 +172,7 @@
                     //监听提交
                     iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
                         var field = data.field; //获取提交的字段
-                        console.log(field)
-                        $.ajax({
-                            url: '/admin/menu/save',
-                            type: 'post',
-                            data: field,
-                            success: function (res) {
-                                if (res.code === 0) {
-                                    loadData(page);
-                                }
-                                layer.msg(res.msg);
-                            }
-                        })
+                        menuUpdate(id, field);
                         layer.close(index); //关闭弹层
                     });
                     submit.trigger('click');

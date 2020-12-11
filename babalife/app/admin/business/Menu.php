@@ -30,12 +30,17 @@ class Menu extends BaseBus
     public function getMenuPageLists($page = 10)
     {
         try {
-            $lists = $this->model->order('sort', 'asc')->paginate($page);
+            $lists = $this->model->where('pid', 0)->order('sort', 'asc')->paginate($page);
+            if ($lists) {
+                $lists = $lists->toArray();
+                $listsChild = $this->model->whereIn('pid', implode(',', array_column($lists['data'], 'id')))->select()->toArray();
+                $lists['data'] = array_merge($lists['data'], $listsChild);
+            }
         } catch (\Exception $e) {
             $lists = [];
         }
 
-        return $lists ? $lists->toArray() : $lists;
+        return $lists;
     }
 
     // 一级菜单查询
@@ -47,7 +52,19 @@ class Menu extends BaseBus
             $lists = [];
         }
 
-        return $lists;
+        return $lists ? $lists->toArray() : $lists;
+    }
+
+    // 所有菜单查询
+    public function getMenuNormalLists()
+    {
+        try {
+            $lists = $this->model->order('sort', 'asc')->where('status', 1)->select();
+        } catch (\Exception $e) {
+            $lists = [];
+        }
+
+        return $lists ? $lists->toArray() : $lists;
     }
 
     // 指定id查询
@@ -67,6 +84,7 @@ class Menu extends BaseBus
     {
         try {
             $result = $this->model->where('id', $id)->delete();
+            $this->model->where('pid', $id)->delete();
         } catch (\Exception $e) {
             $result = false;
         }

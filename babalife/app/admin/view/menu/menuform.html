@@ -53,8 +53,8 @@
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">图标</label>
-        <div class="layui-input-inline">
-            <input class="layui-input" name="icon" type="text" autocomplete="off"/>
+        <div class="layui-input-block">
+            <input type="text" id="iconPicker" name="icon" lay-filter="iconPicker" class="hide">
         </div>
     </div>
     <div class="layui-form-item">
@@ -102,8 +102,8 @@
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">图标</label>
-        <div class="layui-input-inline">
-            <input class="layui-input" name="icon" type="text" value="{$info.icon}" autocomplete="off"/>
+        <div class="layui-input-block">
+            <input type="text" id="iconPicker" name="icon" value="{$info.icon}" lay-filter="iconPicker" class="hide">
         </div>
     </div>
     <div class="layui-form-item">
@@ -123,10 +123,34 @@
     layui.config({
         base: '__STATIC__/layuiadmin/' //静态资源所在路径
     }).extend({
-        index: 'lib/index' //主入口模块
-    }).use(['index', 'form'], function () {
+        index: 'lib/index', //主入口模块
+        iconPicker: '{/}__STATIC__/layuiadmin/lib/extend/iconPicker/iconPicker'
+    }).use(['index', 'form', 'iconPicker'], function () {
         var $ = layui.$
+            , iconPicker = layui.iconPicker
             , form = layui.form;
+
+        iconPicker.render({
+            // 选择器，推荐使用input
+            elem: '#iconPicker',
+            // 数据类型：fontClass/unicode，推荐使用fontClass
+            type: 'fontClass',
+            // 是否开启搜索：true/false，默认true
+            search: true,
+            // 是否开启分页：true/false，默认true
+            page: true,
+            // 每页显示数量，默认12
+            limit: 12,
+            // 点击回调
+            click: function (data) {
+                $('#iconPicker').val(data['icon']);
+            },
+            // 渲染成功后的回调
+            success: function(d) {
+                $('#iconPicker').val(d['data'][0]);
+            }
+        });
+
     })
 </script>
 </body>
