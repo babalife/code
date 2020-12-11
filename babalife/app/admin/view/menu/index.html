@@ -43,19 +43,16 @@
         base: '__STATIC__/layuiadmin/' //静态资源所在路径
     }).extend({
         index: 'lib/index' //主入口模块
-    }).use(['index','table', 'treeTable'], function () {
+    }).use(['index', 'table', 'treeTable'], function () {
         var $ = layui.$
             , form = layui.form
             , treeTable = layui.treeTable;
-
+        var table = null;
         $.get('/admin/menu/list').then(res => {
             treeTable.render({
                 elem: '#tree-table',
                 data: res.data.data,
                 icon_key: 'name',
-                // end: function (e) {
-                //     form.render();
-                // },
                 cols: [
                     {key: 'id', title: '编号'},
                     {key: 'name', title: '名称'},
@@ -69,9 +66,9 @@
                     {
                         title: '状态', width: '100px', align: 'center',
                         template: function (item) {
-                            if (item.status === 1){
+                            if (item.status === 1) {
                                 return '<input type="checkbox" lay-filter="sexDemo" name="status" lay-skin="switch" lay-text="ON|OFF" checked>';
-                            }else{
+                            } else {
                                 return '<input type="checkbox" lay-filter="sexDemo" name="status" lay-skin="switch" lay-text="ON|OFF">';
                             }
                         }
@@ -100,29 +97,17 @@
         });
 
         treeTable.on('tree(del)', function (data) {
-            layer.confirm('确定删除吗？',{icon:2, title: '警告'}, function (index) {
-
-                //执行 Ajax 后重载
-                /*
-                admin.req({
-                  url: 'xxx'
-                  //,……
-                });
-                */
+            layer.confirm('确定删除吗？', {icon: 2, title: '警告'}, function (index) {
                 $.ajax({
                     url: '/admin/menu/' + data.item.id,
                     type: 'delete',
-                    success: function(res){
+                    success: function (res) {
                         if (res.code === 0) {
-                            form.reload('tree-table');
+                            // 重新加载数据
+                            layer.close(index); //关闭弹层
                         }
-
                     }
                 })
-
-                form.render(); //数据刷新
-                layer.close(index); //关闭弹层
-
             });
         });
 
