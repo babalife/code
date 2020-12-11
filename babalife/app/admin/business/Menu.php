@@ -38,13 +38,25 @@ class Menu extends BaseBus
         return $lists ? $lists->toArray() : $lists;
     }
 
+    // 一级菜单查询
+    public function getTopMenuLists()
+    {
+        try {
+            $lists = $this->model->order('sort', 'asc')->where('pid', 0)->select();
+        } catch (\Exception $e) {
+            $lists = [];
+        }
+
+        return $lists;
+    }
+
     // 指定id查询
     public function getMenuById($id)
     {
         try {
             $menu = $this->model->find($id);
         } catch (\Exception $e) {
-            $menu = false;
+            $menu = [];
         }
 
         return $menu;

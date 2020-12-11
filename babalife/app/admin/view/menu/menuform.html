@@ -18,67 +18,116 @@
 </head>
 <body>
 
-<div class="layui-form" style="padding: 20px 0 0 0;">
+{empty name="info"}
+<div class="layui-form" style="padding: 20px 0 0;">
     <div class="layui-form-item">
         <label class="layui-form-label">*上级</label>
         <div class="layui-input-inline">
-            <div class="layui-form-item">
-                <select name="pid" lay-filter="aihao">
-                    <option value="0">顶级菜单</option>
-                    <option value="1">啊啊</option>
-                    <option value="2">打发</option>
-                </select>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">*名称</label>
-            <div class="layui-input-inline">
-                <input type="text" name="name" lay-verify="required" placeholder="请输入名称" class="layui-input"
-                       autocomplete="off">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">*链接</label>
-            <div class="layui-input-inline">
-                <input type="text" name="path" lay-verify="required" placeholder="请输入链接" class="layui-input"
-                       autocomplete="off">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">*排序</label>
-            <div class="layui-input-inline">
-                <input class="layui-input" name="sort" type="number" min="0" max="254" autocomplete="off"/>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">图标</label>
-            <div class="layui-input-inline">
-                <input class="layui-input" name="icon" type="text" autocomplete="off"/>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">状态</label>
-            <div class="layui-input-inline">
-                <input type="checkbox" name="status" value="1" lay-skin="switch" lay-text="ON|OFF" checked>
-            </div>
-        </div>
-        <div class="layui-form-item layui-hide">
-            <input type="button" lay-submit lay-filter="LAY-menu-front-submit" id="LAY-menu-front-submit" value="确认">
+            <select name="pid">
+                <option value="0">顶级菜单</option>
+                {foreach $list as $key=>$vo }
+                    <option value="{$vo.id}">{$vo.name}</option>
+                {/foreach}
+            </select>
         </div>
     </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">*名称</label>
+        <div class="layui-input-inline">
+            <input type="text" name="name" lay-verify="required" placeholder="请输入名称" class="layui-input"
+                   autocomplete="off">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">*链接</label>
+        <div class="layui-input-inline">
+            <input type="text" name="path" lay-verify="required" placeholder="请输入链接" class="layui-input"
+                   autocomplete="off">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">*排序</label>
+        <div class="layui-input-inline">
+            <input class="layui-input" name="sort" type="number" value="0" min="0" max="254" autocomplete="off"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">图标</label>
+        <div class="layui-input-inline">
+            <input class="layui-input" name="icon" type="text" autocomplete="off"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-inline">
+            <input type="checkbox" name="status" value="1" lay-skin="switch" lay-text="ON|OFF" checked>
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="LAY-menu-front-submit" id="LAY-menu-front-submit" value="确认">
+    </div>
+</div>
+{else /}
+<div class="layui-form" style="padding: 20px 0 0;">
+    <div class="layui-form-item">
+        <label class="layui-form-label">*上级</label>
+        <div class="layui-input-inline">
+            <select name="pid">
+                <option value="0">顶级菜单</option>
+                {foreach $list as $key=>$vo }
+                <option value="{$vo.id}" {if $info.pid == $vo.id}selected{/if}>{$vo.name}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">*名称</label>
+        <div class="layui-input-inline">
+            <input type="text" name="name" lay-verify="required" value="{$info.name}" placeholder="请输入名称" class="layui-input"
+                   autocomplete="off">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">*链接</label>
+        <div class="layui-input-inline">
+            <input type="text" name="path" lay-verify="required" value="{$info.path}" placeholder="请输入链接" class="layui-input"
+                   autocomplete="off">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">*排序</label>
+        <div class="layui-input-inline">
+            <input class="layui-input" name="sort" type="number" value="{$info.sort}" min="0" max="254" autocomplete="off"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">图标</label>
+        <div class="layui-input-inline">
+            <input class="layui-input" name="icon" type="text" value="{$info.icon}" autocomplete="off"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-inline">
+            <input type="checkbox" name="status" value="1" lay-skin="switch" lay-text="ON|OFF" {if $info.status==1}checked{/if}>
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="LAY-menu-front-submit" id="LAY-menu-front-submit" value="确认">
+    </div>
+</div>
+{/empty}
 
-    <script src="__STATIC__/layuiadmin/layui/layui.js"></script>
-    <script>
-        layui.config({
-            base: '__STATIC__/layuiadmin/' //静态资源所在路径
-        }).extend({
-            index: 'lib/index' //主入口模块
-        }).use(['index', 'form'], function () {
-            var $ = layui.$
-                , form = layui.form;
-
-
-        })
-    </script>
+<script src="__STATIC__/layuiadmin/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '__STATIC__/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'form'], function () {
+        var $ = layui.$
+            , form = layui.form;
+    })
+</script>
 </body>
 </html>

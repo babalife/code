@@ -19,10 +19,16 @@ class Menu extends BaseAuth
     // 编辑界面渲染
     public function menuform()
     {
-        return view();
+        $id = input('param.id', 0, 'intval');
+        $info = (new MenuBus())->getMenuById($id);
+        $lists = (new MenuBus())->getTopMenuLists();
+        return view('', [
+            'list' => $lists,
+            'info' => $info
+        ]);
     }
 
-    //列表数据
+    // 分页数据
     public function list()
     {
         $lists = (new MenuBus())->getMenuPageLists();
