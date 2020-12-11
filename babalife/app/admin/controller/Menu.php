@@ -16,10 +16,16 @@ class Menu extends BaseAuth
         return view();
     }
 
+    // 编辑界面渲染
+    public function menuform()
+    {
+        return view();
+    }
+
     //列表数据
     public function list()
     {
-        $lists = (new MenuBus())->getMenuLists();
+        $lists = (new MenuBus())->getMenuPageLists();
         if ($lists) {
             return Result::success($lists);
         }
@@ -64,10 +70,22 @@ class Menu extends BaseAuth
     // 更新
     public function update($id)
     {
-        return 'update' . $id;
+        $data = input('post.');
+
+        $validate = new MenuValidate();
+        if (!$validate->scene('id')->check(['id' => $id])) {
+            return Result::error($validate->getError());
+        }
+
+        $result = (new MenuBus())->updateMenuById($id, $data);
+        if ($result) {
+            return Result::success($result, '修改成功');
+        }
+
+        return Result::error('修改失败');
     }
 
-    //删除
+    // 删除
     public function delete($id)
     {
         $validate = new MenuValidate();
@@ -82,5 +100,4 @@ class Menu extends BaseAuth
 
         return Result::error('删除失败');
     }
-
 }

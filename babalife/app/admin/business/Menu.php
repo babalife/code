@@ -27,15 +27,15 @@ class Menu extends BaseBus
     }
 
     // 分页查询
-    public function getMenuLists($page = 10)
+    public function getMenuPageLists($page = 10)
     {
         try {
-            $lists = $this->model->paginate($page);
+            $lists = $this->model->order('sort', 'asc')->paginate($page);
         } catch (\Exception $e) {
             $lists = [];
         }
 
-        return $lists?$lists->toArray():$lists;
+        return $lists ? $lists->toArray() : $lists;
     }
 
     // 指定id查询
@@ -55,6 +55,20 @@ class Menu extends BaseBus
     {
         try {
             $result = $this->model->where('id', $id)->delete();
+        } catch (\Exception $e) {
+            $result = false;
+        }
+
+        return $result;
+    }
+
+    // 指定id更新数据
+    public function updateMenuById($id, $data)
+    {
+        $data['update_time'] = time();
+
+        try {
+            $result = $this->model->where('id', $id)->save($data);
         } catch (\Exception $e) {
             $result = false;
         }
