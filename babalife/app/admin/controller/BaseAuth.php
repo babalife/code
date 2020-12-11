@@ -11,20 +11,25 @@ class BaseAuth extends Base
     // 登录校验
     protected function initialize()
     {
-        if (!$this->isLogin()){
+        // 未登录
+        if (!$this->isLogin()) {
             redirect(url('/admin/login/index'))->send();
         }
     }
 
     // 是否登录
-    public function isLogin(){
-
+    public function isLogin()
+    {
         // 本地调试模式，线上.dev设置为 false
-        if (env('APP_DEBUG', false)){
+        if (env('APP_DEBUG', false)) {
+            $this->user = [
+                'id' => 1,
+                'name' => '张三'
+            ];
             return true;
         }
 
-        $user = session('admin_user');
+        $user = session(config('code.session.admin'));
         if ($user && $user['id']) {
             $this->user = $user;
             return true;
