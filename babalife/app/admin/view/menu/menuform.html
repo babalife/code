@@ -17,37 +17,36 @@
     </style>
 </head>
 <body>
-
 {empty name="info"}
-<div class="layui-form" style="padding: 20px 0 0;">
+<div class="layui-form" style="padding: 20px 30px 0 0;">
     <div class="layui-form-item">
         <label class="layui-form-label">*上级</label>
-        <div class="layui-input-inline">
+        <div class="layui-input-block">
             <select name="pid">
                 <option value="0">顶级菜单</option>
                 {foreach $list as $key=>$vo }
-                    <option value="{$vo.id}">{$vo.name}</option>
+                <option value="{$vo.id}">{$vo.name}</option>
                 {/foreach}
             </select>
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">*名称</label>
-        <div class="layui-input-inline">
+        <div class="layui-input-block">
             <input type="text" name="name" lay-verify="required" placeholder="请输入名称" class="layui-input"
                    autocomplete="off">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">链接</label>
-        <div class="layui-input-inline">
+        <div class="layui-input-block">
             <input type="text" name="path" placeholder="请输入链接" class="layui-input"
                    autocomplete="off">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">*排序</label>
-        <div class="layui-input-inline">
+        <div class="layui-input-block">
             <input class="layui-input" name="sort" type="number" value="0" min="0" max="254" autocomplete="off"/>
         </div>
     </div>
@@ -75,7 +74,8 @@
             <select name="pid">
                 <option value="0">顶级菜单</option>
                 {foreach $list as $key=>$vo }
-                <option value="{$vo.id}" {if $info.pid == $vo.id}selected{/if}>{$vo.name}</option>
+                <option value="{$vo.id}" {if $info.pid== $vo.id}selected{
+                /if}>{$vo.name}</option>
                 {/foreach}
             </select>
         </div>
@@ -83,7 +83,8 @@
     <div class="layui-form-item">
         <label class="layui-form-label">*名称</label>
         <div class="layui-input-inline">
-            <input type="text" name="name" lay-verify="required" value="{$info.name}" placeholder="请输入名称" class="layui-input"
+            <input type="text" name="name" lay-verify="required" value="{$info.name}" placeholder="请输入名称"
+                   class="layui-input"
                    autocomplete="off">
         </div>
     </div>
@@ -97,7 +98,8 @@
     <div class="layui-form-item">
         <label class="layui-form-label">*排序</label>
         <div class="layui-input-inline">
-            <input class="layui-input" name="sort" type="number" value="{$info.sort}" min="0" max="254" autocomplete="off"/>
+            <input class="layui-input" name="sort" type="number" value="{$info.sort}" min="0" max="254"
+                   autocomplete="off"/>
         </div>
     </div>
     <div class="layui-form-item">
@@ -110,7 +112,8 @@
         <label class="layui-form-label">状态</label>
         <div class="layui-input-inline">
             <input id="menu-status" type="hidden" name="status" value="{$info.status}">
-            <input type="checkbox" lay-skin="switch" lay-filter="status" lay-text="ON|OFF" {if $info.status==1}checked{/if}>
+            <input type="checkbox" lay-skin="switch" lay-filter="status" lay-text="ON|OFF" {if
+                   $info.status==1}checked{/if}>
         </div>
     </div>
     <div class="layui-form-item layui-hide">
@@ -118,7 +121,7 @@
     </div>
 </div>
 {/empty}
-
+</body>
 <script src="__STATIC__/layuiadmin/layui/layui.js"></script>
 <script>
     layui.config({
@@ -147,7 +150,7 @@
                 $('#iconPicker').val(data['icon']);
             },
             // 渲染成功后的回调
-            success: function(d) {
+            success: function (d) {
                 $('#iconPicker').val(d['data'][0]);
             }
         });
