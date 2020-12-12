@@ -21,7 +21,7 @@ class Menu extends BaseAuth
     public function menuform()
     {
         $id = input('param.id', 0, 'intval');
-        $info = (new MenuBus())->getMenuById($id);
+        $info = (new MenuBus())->getById($id);
         $lists = (new MenuBus())->getTopMenuLists();
         return view('', [
             'list' => $lists,
@@ -66,7 +66,7 @@ class Menu extends BaseAuth
             return Result::error($validate->getError());
         }
 
-        $menuInfo = (new MenuBus())->getMenuById($id);
+        $menuInfo = (new MenuBus())->getById($id);
         if ($menuInfo) {
             return Result::success($menuInfo);
         }
@@ -84,7 +84,7 @@ class Menu extends BaseAuth
             return Result::error($validate->getError());
         }
 
-        $result = (new MenuBus())->updateMenuById($id, $data);
+        $result = (new MenuBus())->updateById($id, $data);
         if ($result) {
             return Result::success($result, '修改成功');
         }
@@ -100,7 +100,7 @@ class Menu extends BaseAuth
             return Result::error($validate->getError());
         }
 
-        $result = (new MenuBus())->delMenuById($id);
+        $result = (new MenuBus())->delById($id);
         if ($result) {
             return Result::success([], '删除成功');
         }

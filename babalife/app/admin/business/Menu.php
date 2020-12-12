@@ -4,7 +4,6 @@
 namespace app\admin\business;
 
 use app\admin\model\Menu as MenuModel;
-use think\db\Where;
 
 // 菜单管理业务逻辑
 class Menu extends BaseBus
@@ -13,18 +12,6 @@ class Menu extends BaseBus
     public function __construct()
     {
         $this->model = new MenuModel();
-    }
-
-    // 新增
-    public function insertDate($data)
-    {
-        try {
-            $result = $this->model->save($data);
-        } catch (\Exception $e) {
-            $result = false;
-        }
-
-        return $result;
     }
 
     // 分页查询
@@ -68,42 +55,28 @@ class Menu extends BaseBus
         return $lists ? $lists->toArray() : $lists;
     }
 
-    // 指定id查询
-    public function getMenuById($id)
+    // 指定id删除，重写
+    public function delById($id)
     {
         try {
-            $menu = $this->model->find($id);
-        } catch (\Exception $e) {
-            $menu = [];
-        }
-
-        return $menu;
-    }
-
-    // 指定id删除
-    public function delMenuById($id)
-    {
-        try {
-            $result = $this->model->where('id', $id)->delete();
+            $result = parent::delById($id);
             $this->model->where('pid', $id)->delete();
         } catch (\Exception $e) {
-            $result = false;
+            $result = [];
         }
 
         return $result;
     }
 
-    // 指定id更新数据
-    public function updateMenuById($id, $data)
+    // 指定ID更新，重写
+    public function updateById($id, $data)
     {
-        $data['update_time'] = time();
-
         try {
-            $result = $this->model->where('id', $id)->save($data);
+            $result = parent::updateById($id, $data);
+            $this->model->where('pid', $id)->save($data);
         } catch (\Exception $e) {
-            $result = false;
+            $result = [];
         }
-
         return $result;
     }
 }

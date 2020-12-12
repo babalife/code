@@ -3,6 +3,10 @@
 
 namespace app\admin\controller;
 
+use app\admin\business\AdminUserRole;
+use app\admin\validate\AdminUserRole as AdminUserRoleValidate;
+use app\common\basic\Result;
+
 // 用户角色控制器
 class Role extends BaseAuth
 {
@@ -27,7 +31,19 @@ class Role extends BaseAuth
     // 新增
     public function save()
     {
+        $data = input('post.');
 
+        $validate = new AdminUserRoleValidate();
+        if (!$validate->scene('save')->check($data)) {
+            return Result::error($validate->getError());
+        }
+
+        $result = (new AdminUserRole())->insertDate($data);
+        if ($result) {
+            return Result::success([], '新增成功');
+        }
+
+        return Result::error('新增失败');
     }
 
     // 编辑
