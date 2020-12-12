@@ -10,20 +10,16 @@ class AdminUserRole extends Validate
 {
     //校验规则
     protected $rule = [
+        'id' => 'require',
         'name' => 'require',
-        'path' => 'require',
-        'sort' => 'require',
-        'pid' => 'require',
-        'id' => 'require'
+        'desc' => 'require',
     ];
 
     //提示消息
     protected $message = [
-        'name' => '菜单名称必须',
-        'path' => '菜单路径必须',
-        'sort' => '菜单排序必须',
-        'pid' => '菜单父节点必须',
-        'id' => '菜单编号必填'
+        'id' => '角色编号必填',
+        'name' => '角色名称必须',
+        'path' => '角色描述必须',
     ];
 
     //校验条件

@@ -58,22 +58,6 @@ class Menu extends BaseAuth
         return Result::error('新增失败');
     }
 
-    // 编辑
-    public function edit($id)
-    {
-        $validate = new MenuValidate();
-        if (!$validate->scene('id')->check(['id' => $id])) {
-            return Result::error($validate->getError());
-        }
-
-        $menuInfo = (new MenuBus())->getById($id);
-        if ($menuInfo) {
-            return Result::success($menuInfo);
-        }
-
-        return Result::error('获取失败');
-    }
-
     // 更新
     public function update($id)
     {

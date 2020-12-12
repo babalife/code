@@ -3,7 +3,7 @@
 
 namespace app\admin\controller;
 
-use app\admin\business\AdminUserRole;
+use app\admin\business\AdminUserRole as AdminUserRoleBus;
 use app\admin\validate\AdminUserRole as AdminUserRoleValidate;
 use app\common\basic\Result;
 
@@ -23,9 +23,14 @@ class Role extends BaseAuth
     }
 
     // 列表数据
-    public function lists()
+    public function list()
     {
-        
+        $result = (new AdminUserRoleBus())->getPageList();
+        if ($result) {
+            return Result::success($result);
+        }
+
+        return Result::error('获取失败');
     }
 
     // 新增
@@ -38,7 +43,7 @@ class Role extends BaseAuth
             return Result::error($validate->getError());
         }
 
-        $result = (new AdminUserRole())->insertDate($data);
+        $result = (new AdminUserRoleBus())->insertDate($data);
         if ($result) {
             return Result::success([], '新增成功');
         }
@@ -49,18 +54,50 @@ class Role extends BaseAuth
     // 编辑
     public function edit($id)
     {
+        $validate = new AdminUserRoleValidate();
+        if (!$validate->scene('id')->check(['id' => $id])) {
+            return Result::error($validate->getError());
+        }
 
+        $menuInfo = (new AdminUserRoleBus())->getById($id);
+        if ($menuInfo) {
+            return Result::success($menuInfo);
+        }
+
+        return Result::error('获取失败');
     }
 
     // 修改
     public function update($id)
     {
+        $data = input('post.');
 
+        $validate = new AdminUserRoleValidate();
+        if (!$validate->scene('id')->check(['id' => $id])) {
+            return Result::error($validate->getError());
+        }
+
+        $result = (new AdminUserRoleBus())->updateById($id, $data);
+        if ($result) {
+            return Result::success($result, '修改成功');
+        }
+
+        return Result::error('修改失败');
     }
 
     // 删除
     public function delete($id)
     {
+        $validate = new AdminUserRoleValidate();
+        if (!$validate->scene('id')->check(['id' => $id])) {
+            return Result::error($validate->getError());
+        }
 
+        $result = (new AdminUserRoleBus())->delById($id);
+        if ($result) {
+            return Result::success([], '删除成功');
+        }
+
+        return Result::error('删除失败');
     }
 }

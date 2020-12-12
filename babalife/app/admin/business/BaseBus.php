@@ -8,6 +8,18 @@ class BaseBus
 {
     protected $model = null;
 
+    // 数据分页列表
+    public function getPageList($limit = 10)
+    {
+        try {
+            $result = $this->model->order('id', 'asc')->paginate($limit);
+        } catch (\Exception $e) {
+            $result = [];
+        }
+
+        return $result;
+    }
+
     // 新增数据
     public function insertDate($data)
     {
