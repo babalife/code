@@ -39,9 +39,9 @@
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">*链接</label>
+        <label class="layui-form-label">链接</label>
         <div class="layui-input-inline">
-            <input type="text" name="path" lay-verify="required" placeholder="请输入链接" class="layui-input"
+            <input type="text" name="path" placeholder="请输入链接" class="layui-input"
                    autocomplete="off">
         </div>
     </div>
@@ -88,9 +88,9 @@
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">*链接</label>
+        <label class="layui-form-label">链接</label>
         <div class="layui-input-inline">
-            <input type="text" name="path" lay-verify="required" value="{$info.path}" placeholder="请输入链接" class="layui-input"
+            <input type="text" name="path" value="{$info.path}" placeholder="请输入链接" class="layui-input"
                    autocomplete="off">
         </div>
     </div>
@@ -109,7 +109,8 @@
     <div class="layui-form-item">
         <label class="layui-form-label">状态</label>
         <div class="layui-input-inline">
-            <input type="checkbox" name="status" value="1" lay-skin="switch" lay-text="ON|OFF" {if $info.status==1}checked{/if}>
+            <input id="menu-status" type="hidden" name="status" value="{$info.status}">
+            <input type="checkbox" lay-skin="switch" lay-filter="status" lay-text="ON|OFF" {if $info.status==1}checked{/if}>
         </div>
     </div>
     <div class="layui-form-item layui-hide">
@@ -151,6 +152,11 @@
             }
         });
 
+        // 修改菜单状态
+        form.on('switch(status)', function (data) {
+            var status = data.elem.checked ? 1 : 0;
+            $('#menu-status').val(status);
+        });
     })
 </script>
 </body>
