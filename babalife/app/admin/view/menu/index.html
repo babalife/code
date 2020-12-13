@@ -73,7 +73,8 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label layui-form-required">排序:</label>
                     <div class="layui-input-block">
-                        <input name="sort" placeholder="请输入排序号" value="0" type="number" class="layui-input" autocomplete="off"
+                        <input name="sort" placeholder="请输入排序号" value="0" type="number" class="layui-input"
+                               autocomplete="off"
                                lay-verType="tips" lay-verify="required|number" required/>
                     </div>
                 </div>
@@ -112,7 +113,6 @@
         var treeTable = layui.treeTable;
         var xmSelect = layui.xmSelect;
         var iconPicker = layui.iconPicker;
-        var tbDataList = [];
         $('body').removeClass('layui-hide');
 
         // 渲染表格
@@ -124,20 +124,28 @@
                 '<button lay-event="del" class="layui-btn layui-btn-sm layui-btn-danger icon-btn"><i class="layui-icon">&#xe640;</i>删除</button>',
                 '</p>'].join(''),
             tree: {
-                iconIndex: 2,
+                iconIndex: 1,
                 isPidData: true,
                 idName: 'id',
                 pidName: 'pid'
             },
             defaultToolbar: ['filter', 'exports'],
             cols: [[
-                {type: 'numbers'},
+                // {type: 'numbers'},
                 {type: 'checkbox'},
                 // {field: 'id', title: 'id', align: 'center', width: 30},
-                {field: 'name', title: '权限名称', minWidth: 150},
-                {title: '菜单图标', templet: '<p><i class="layui-icon {{d.icon}}"></i></p>', align: 'center', width: 100},
-                {field: 'path', title: '菜单路径'},
+                {field: 'name', title: '名称', minWidth: 100},
+                {title: '图标', templet: '<p><i class="layui-icon {{d.icon}}"></i></p>', align: 'center', width: 80},
+                {field: 'path', title: '路径'},
                 {field: 'authority', title: '权限标识'},
+                {
+                    title: '类型', templet: function (d) {
+                        return [
+                            '<span class="layui-badge layui-badge-green">菜单</span>',
+                            '<span class="layui-badge layui-badge-gray">按钮</span>'
+                        ][d.type];
+                    }, align: 'center', width: 80
+                },
                 {
                     title: '状态', templet: function (d) {
                         return [
@@ -147,15 +155,7 @@
                     }, align: 'center', width: 80
                 },
                 {field: 'sort', title: '排序', align: 'center', width: 80},
-                {
-                    title: '类型', templet: function (d) {
-                        return [
-                            '<span class="layui-badge layui-badge-green">菜单</span>',
-                            '<span class="layui-badge layui-badge-gray">按钮</span>'
-                        ][d.type];
-                    }, align: 'center', width: 80
-                },
-                {title: '创建时间', templet: '<p>{{layui.util.toDateString(d.createTime)}}</p>', align: 'center'},
+                // {title: '创建时间', templet: '<p>{{layui.util.toDateString(d.createTime)}}</p>', align: 'center'},
                 {title: '操作', toolbar: '#tbBar', align: 'center', width: 120}
             ]],
             done: function (data) {
@@ -297,6 +297,7 @@
                         // }
                     });
                     // 渲染下拉树
+                    insTb.options.data.unshift({'name': '顶级菜单', 'id': 0});
                     var insXmSel = xmSelect.render({
                         el: '#authoritiesEditParentSel',
                         height: '250px',
