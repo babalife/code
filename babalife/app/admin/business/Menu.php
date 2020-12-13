@@ -73,7 +73,7 @@ class Menu extends BaseBus
     {
         try {
             $result = parent::updateById($id, $data);
-            $this->model->where('pid', $id)->save($data);
+            $this->model->where('pid', $id)->save(['status' => $data['status']]);
         } catch (\Exception $e) {
             $result = [];
         }

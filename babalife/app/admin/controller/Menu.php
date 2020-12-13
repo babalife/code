@@ -6,6 +6,7 @@ namespace app\admin\controller;
 use app\admin\validate\Menu as MenuValidate;
 use app\common\basic\Result;
 use app\admin\business\Menu as MenuBus;
+use think\facade\Request;
 
 // 菜单管理控制器
 class Menu extends BaseAuth
@@ -48,7 +49,7 @@ class Menu extends BaseAuth
     // 新增
     public function save()
     {
-        $data = input('post.');
+        $data = Request::only(['pid','name','icon','path','status','type','sort','authority'], 'post');
 
         $validate = new MenuValidate();
         if (!$validate->scene('save')->check($data)) {
@@ -66,7 +67,7 @@ class Menu extends BaseAuth
     // 更新
     public function update($id)
     {
-        $data = input('post.');
+        $data = Request::only(['pid','name','icon','path','status','type','sort','authority'], 'post');
 
         $validate = new MenuValidate();
         if (!$validate->scene('id')->check(['id' => $id])) {

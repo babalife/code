@@ -14,7 +14,8 @@ class Menu extends Validate
         'path' => 'require',
         'sort' => 'require',
         'pid' => 'require',
-        'id' => 'require'
+        'id' => 'require',
+        'type' => 'require'
     ];
 
     //提示消息
@@ -23,12 +24,13 @@ class Menu extends Validate
         'path' => '菜单路径必须',
         'sort' => '菜单排序必须',
         'pid' => '菜单父节点必须',
+        'type' => '菜单类型必须',
         'id' => '菜单编号必填'
     ];
 
     //校验条件
     protected $scene = [
-        'save' => ['name', 'path', 'sort', 'pid'],
+        'save' => ['name', 'sort', 'type'],
         'id' => ['id']
     ];
 }

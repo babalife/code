@@ -204,9 +204,27 @@
             menuUpdate(id, {sort});
         })
 
+        // 修改菜单状态
+        form.on('switch(status)', function (data) {
+            var id = data.elem['dataset'].id;
+            var status = data.elem.checked ? 1 : 0;
+            menuUpdate(id, {status});
+        });
 
-
-
+        // 更新数据
+        function menuUpdate(id, data) {
+            $.ajax({
+                url: '/admin/menu/' + id,
+                type: 'put',
+                data,
+                success: function (res) {
+                    if (res.code === 0) {
+                        loadData(page); // 重新加载数据
+                    }
+                    layer.msg(res.msg);
+                }
+            })
+        }
 
     });
 </script>
