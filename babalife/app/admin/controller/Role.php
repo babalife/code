@@ -95,4 +95,22 @@ class Role extends BaseAuth
 
         return Result::error('删除失败');
     }
+
+    // 批量删除
+    public function deleteAll()
+    {
+        $ids = input('post.ids', '', 'trim');
+
+        $validate = new AdminUserRoleValidate();
+        if (!$validate->scene('id')->check(['id' => $ids])) {
+            return Result::error($validate->getError());
+        }
+
+        $result = (new AdminUserRoleBus())->delByIds($ids);
+        if ($result) {
+            return Result::success([], '删除成功');
+        }
+
+        return Result::error('删除失败');
+    }
 }

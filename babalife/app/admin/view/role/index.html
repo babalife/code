@@ -65,7 +65,7 @@
             , form = layui.form
             , table = layui.table;
 
-        table.render({
+        var roleTable = table.render({
             elem: '#LAY-user-back-role'
             , url: '/admin/role/list' //模拟接口
             , page: true //开启分页
@@ -91,24 +91,27 @@
         var active = {
             batchdel: function () {
                 var checkStatus = table.checkStatus('LAY-user-back-role')
-                    , checkData = checkStatus.data; //得到选中的数据
-
-                if (checkData.length === 0) {
-                    return layer.msg('请选择数据');
+                var checkRows = checkStatus.data;
+                if (checkRows.length === 0) {
+                    layer.msg('请选择要删除的数据', {icon: 2});
+                    return;
                 }
-
-                layer.confirm('确定删除吗？', function (index) {
-
-                    //执行 Ajax 后重载
-                    /*
-                    admin.req({
-                      url: 'xxx'
-                      //,……
-                    });
-                    */
-                    console.log(checkData)
-                    table.reload('LAY-user-back-role');
-                    layer.msg('已删除');
+                var ids = checkRows.map((item) => item.id).join(',');
+                layer.confirm('确定删除吗？', {icon: 2, title: '警告'}, function (index) {
+                    $.ajax({
+                        url: '/admin/role',
+                        type: 'delete',
+                        data: {ids},
+                        success: function (res) {
+                            if (res.code === 0) {
+                                roleTable.reload(); //数据刷新
+                                layer.close(index); //关闭弹层
+                                layer.msg(res.msg, {icon: 1});
+                                return;
+                            }
+                            layer.msg(res.msg, {icon: 2});
+                        }
+                    })
                 });
             },
             add: function () {
@@ -132,8 +135,10 @@
                             if (res.code === 0) {
                                 obj.del();
                                 layer.close(index);
+                                layer.msg(res.msg,{icon: 1});
+                                return;
                             }
-                            layer.msg(res.msg);
+                            layer.msg(res.msg,{icon: 2});
                         }
                     })
 
@@ -148,7 +153,7 @@
             var layerForm = layer.open({
                 type: 1
                 , area: ['500px', '300px']
-                , title: '添加新角色'
+                , title: (mData ? '修改' : '添加') + '角色'
                 , content: $('#roleEditDialog').html()
                 , success: function (layero, dIndex) {
                     // 回显表单数据
@@ -168,7 +173,7 @@
                                 if (res.code === 0) {
                                     layer.msg(res.msg, {icon: 1});
                                     layer.close(dIndex);
-                                    table.reload('LAY-user-back-role'); //数据刷新
+                                    roleTable.reload(); //数据刷新
                                     return;
                                 }
                                 layer.msg(res.msg, {icon: 2});
