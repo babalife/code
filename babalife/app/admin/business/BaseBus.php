@@ -8,6 +8,18 @@ class BaseBus
 {
     protected $model = null;
 
+    // 数据列表
+    public function getList($order = 'id', $sort = 'asc')
+    {
+        try {
+            $result = $this->model->order($order, $sort)->select();
+        } catch (\Exception $e) {
+            $result = [];
+        }
+
+        return $result ? $result->toArray() : $result;
+    }
+
     // 数据分页列表
     public function getPageList($limit = 10)
     {
@@ -49,6 +61,18 @@ class BaseBus
     {
         try {
             $result = $this->model->where('id', $id)->delete();
+        } catch (\Exception $e) {
+            $result = [];
+        }
+
+        return $result;
+    }
+
+    // 指定IDS删除
+    public function delByIds($ids)
+    {
+        try {
+            $result = $this->model->whereIn('id', $ids)->delete();
         } catch (\Exception $e) {
             $result = [];
         }

@@ -13,7 +13,7 @@ class Result
      * @param int $code
      * @return \think\response\Json
      */
-    public static function success($data, $msg = 'OK', $code =0 ){
+    public static function success($data, $msg = 'OK', $code =0){
         return json([
             'data' => $data,
             'msg' => $msg,

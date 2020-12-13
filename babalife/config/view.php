@@ -24,6 +24,7 @@ return [
     'taglib_end' => '}',
     // 模板标签转换
     'tpl_replace_string' => [
-        '__STATIC__' => '/static'
+        '__STATIC__' => '/static',
+        '__LAYUIADMIN__'  => '/static/layuiadmin'
     ]
 ];
