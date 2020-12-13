@@ -17,12 +17,6 @@ class Role extends BaseAuth
         return view();
     }
 
-    // 编辑页面渲染
-    public function roleform()
-    {
-        return view();
-    }
-
     // 列表数据
     public function list()
     {

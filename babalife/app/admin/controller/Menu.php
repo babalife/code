@@ -17,19 +17,6 @@ class Menu extends BaseAuth
         return view();
     }
 
-
-    // 编辑界面渲染
-    public function menuform()
-    {
-        $id = input('param.id', 0, 'intval');
-        $info = (new MenuBus())->getById($id);
-        $lists = (new MenuBus())->getTopMenuLists();
-        return view('', [
-            'list' => $lists,
-            'info' => $info
-        ]);
-    }
-
     // 数据列表
     public function list()
     {
