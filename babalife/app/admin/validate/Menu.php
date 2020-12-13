@@ -21,6 +21,7 @@ class Menu extends Validate
     //提示消息
     protected $message = [
         'name' => '菜单名称必须',
+        'authority' => '权限标识必须',
         'path' => '菜单路径必须',
         'sort' => '菜单排序必须',
         'pid' => '菜单父节点必须',
@@ -31,6 +32,7 @@ class Menu extends Validate
     //校验条件
     protected $scene = [
         'save' => ['name', 'sort', 'type'],
+        'update' => ['id', 'name', 'sort', 'type'],
         'id' => ['id']
     ];
 }

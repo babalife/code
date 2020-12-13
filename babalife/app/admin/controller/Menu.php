@@ -70,7 +70,7 @@ class Menu extends BaseAuth
         $data = Request::only(['pid','name','icon','path','status','type','sort','authority'], 'post');
 
         $validate = new MenuValidate();
-        if (!$validate->scene('id')->check(['id' => $id])) {
+        if (!$validate->scene('update')->check(['id' => $id])) {
             return Result::error($validate->getError());
         }
 

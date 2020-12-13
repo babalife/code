@@ -25,6 +25,7 @@ class AdminUserRole extends Validate
     //校验条件
     protected $scene = [
         'save' => ['name', 'path', 'sort', 'pid'],
+        'update' => ['id', 'name'],
         'id' => ['id']
     ];
 }

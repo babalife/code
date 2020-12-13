@@ -31,31 +31,24 @@
 
 <!-- 表单弹窗 -->
 <script type="text/html" id="roleEditDialog">
-    <form id="roleEditForm" lay-filter="roleEditForm" class="layui-form model-form">
+    <form id="roleEditForm" lay-filter="roleEditForm" class="layui-form model-form" style="padding: 20px 20px 0 0;">
         <input name="roleId" type="hidden"/>
         <div class="layui-form-item">
             <label class="layui-form-label layui-form-required">角色名:</label>
             <div class="layui-input-block">
-                <input name="roleName" placeholder="请输入角色名" class="layui-input"
+                <input name="name" placeholder="请输入角色名" class="layui-input"
                        lay-verType="tips" lay-verify="required" required/>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label layui-form-required">角色代码:</label>
+            <label class="layui-form-label">描述:</label>
             <div class="layui-input-block">
-                <input name="roleCode" placeholder="请输入角色代码" class="layui-input"
-                       lay-verType="tips" lay-verify="required" required/>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">备注:</label>
-            <div class="layui-input-block">
-                <textarea name="comments" placeholder="请输入备注" class="layui-textarea"></textarea>
+                <textarea name="desc" placeholder="请输入描述" class="layui-textarea"></textarea>
             </div>
         </div>
         <div class="layui-form-item text-right">
             <button class="layui-btn" lay-filter="roleEditSubmit" lay-submit>保存</button>
-            <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">取消</button>
+            <button class="layui-btn layui-btn-primary closeDialog" type="button">取消</button>
         </div>
     </form>
 </script>
@@ -67,7 +60,7 @@
         base: '__LAYUIADMIN__/' //静态资源所在路径
     }).extend({
         index: 'lib/index' //主入口模块
-    }).use(['index', 'useradmin', 'table'], function () {
+    }).use(['index', 'table'], function () {
         var $ = layui.$
             , form = layui.form
             , table = layui.table;
@@ -119,28 +112,7 @@
                 });
             },
             add: function () {
-                layer.open({
-                    type: 1
-                    , title: '添加新角色'
-                    , content: $('#roleEditDialog').html()
-                    , btn: ['确定', '取消']
-                    , yes: function (index, layero) {
-                        var iframeWindow = window['layui-layer-iframe' + index]
-                            , submit = layero.find('iframe').contents().find("#LAY-user-role-submit");
-
-                        //监听提交
-                        iframeWindow.layui.form.on('submit(LAY-user-role-submit)', function (data) {
-                            var field = data.field; //获取提交的字段
-
-                            //提交 Ajax 成功后，静态更新表格中的数据
-                            //$.ajax({});
-                            table.reload('LAY-user-back-role');
-                            layer.close(index); //关闭弹层
-                        });
-
-                        submit.trigger('click');
-                    }
-                });
+                showEditModel();
             }
         }
         $('.layui-btn.layuiadmin-btn-role').on('click', function () {
@@ -167,36 +139,47 @@
 
                 });
             } else if (obj.event === 'edit') {
-                var tr = $(obj.tr);
-
-                layer.open({
-                    type: 2
-                    , title: '编辑角色'
-                    , content: '../../../views/user/administrators/roleform.html'
-                    , area: ['500px', '480px']
-                    , btn: ['确定', '取消']
-                    , yes: function (index, layero) {
-                        var iframeWindow = window['layui-layer-iframe' + index]
-                            , submit = layero.find('iframe').contents().find("#LAY-user-role-submit");
-
-                        //监听提交
-                        iframeWindow.layui.form.on('submit(LAY-user-role-submit)', function (data) {
-                            var field = data.field; //获取提交的字段
-
-                            //提交 Ajax 成功后，静态更新表格中的数据
-                            //$.ajax({});
-                            table.reload('LAY-user-back-role'); //数据刷新
-                            layer.close(index); //关闭弹层
-                        });
-
-                        submit.trigger('click');
-                    }
-                    , success: function (layero, index) {
-
-                    }
-                })
+                showEditModel(data);
             }
         });
+
+        /* 显示表单弹窗 */
+        function showEditModel(mData) {
+            var layerForm = layer.open({
+                type: 1
+                , area: ['500px', '300px']
+                , title: '添加新角色'
+                , content: $('#roleEditDialog').html()
+                , success: function (layero, dIndex) {
+                    // 回显表单数据
+                    form.val('roleEditForm', mData);
+                    // 关闭弹窗事件
+                    $('.closeDialog').on("click", function () {
+                        layer.close(layerForm);
+                    })
+                    // 表单提交事件
+                    form.on('submit(roleEditSubmit)', function (data) {
+                        var loadIndex = layer.load(2);
+                        $.ajax({
+                            url: mData ? '/admin/role/' + mData.id : '/admin/role',
+                            type: mData ? 'put' : 'post',
+                            data: data.field,
+                            success: function (res) {
+                                if (res.code === 0) {
+                                    layer.msg(res.msg, {icon: 1});
+                                    layer.close(dIndex);
+                                    table.reload('LAY-user-back-role'); //数据刷新
+                                    return;
+                                }
+                                layer.msg(res.msg, {icon: 2});
+                            }
+                        });
+                        layer.close(loadIndex);
+                        return false;
+                    });
+                }
+            });
+        }
     });
 </script>
 {/block}

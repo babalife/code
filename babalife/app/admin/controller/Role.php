@@ -6,6 +6,7 @@ namespace app\admin\controller;
 use app\admin\business\AdminUserRole as AdminUserRoleBus;
 use app\admin\validate\AdminUserRole as AdminUserRoleValidate;
 use app\common\basic\Result;
+use think\facade\Request;
 
 // 用户角色控制器
 class Role extends BaseAuth
@@ -36,7 +37,7 @@ class Role extends BaseAuth
     // 新增
     public function save()
     {
-        $data = input('post.');
+        $data = Request::only(['name', 'desc'], 'post');
 
         $validate = new AdminUserRoleValidate();
         if (!$validate->scene('save')->check($data)) {
@@ -70,10 +71,10 @@ class Role extends BaseAuth
     // 修改
     public function update($id)
     {
-        $data = input('post.');
+        $data = Request::only(['name', 'desc'], 'post');
 
         $validate = new AdminUserRoleValidate();
-        if (!$validate->scene('id')->check(['id' => $id])) {
+        if (!$validate->scene('update')->check(['id' => $id, 'name'=>$data['name']])) {
             return Result::error($validate->getError());
         }
 
