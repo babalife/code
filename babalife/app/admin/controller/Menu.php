@@ -36,7 +36,7 @@ class Menu extends BaseAuth
     // 新增
     public function save()
     {
-        $data = Request::only(['pid','name','icon','path','status','type','sort','authority'], 'post');
+        $data = Request::only(['pid', 'name', 'icon', 'path', 'status', 'type', 'sort', 'authority'], 'post');
 
         $validate = new MenuValidate();
         if (!$validate->scene('save')->check($data)) {
@@ -54,10 +54,10 @@ class Menu extends BaseAuth
     // 更新
     public function update($id)
     {
-        $data = Request::only(['pid','name','icon','path','status','type','sort','authority'], 'post');
+        $data = Request::only(['pid', 'name', 'icon', 'path', 'status', 'type', 'sort', 'authority'], 'post');
 
         $validate = new MenuValidate();
-        if (!$validate->scene('update')->check(['id' => $id])) {
+        if (!$validate->scene('update')->check(['id' => $id, 'name' => $data['name'], 'sort' => $data['sort'], 'type' => $data['type']])) {
             return Result::error($validate->getError());
         }
 
