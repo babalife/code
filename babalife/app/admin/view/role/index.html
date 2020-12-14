@@ -54,7 +54,8 @@
 
 <!-- 分配权限 -->
 <script type="text/html" id="roleAssignDialog">
-    <form id="roleAssignEditForm" lay-filter="roleAssignEditForm" class="layui-form model-form" style="height: 100%; padding: 10px 10px 0 10px;">
+    <form id="roleAssignEditForm" lay-filter="roleAssignEditForm" class="layui-form model-form"
+          style="height: 100%; padding: 10px 10px 0 10px;">
         <div class="layui-form-item" style="height: 78%; overflow: scroll; border-bottom: 1px solid #e6e6e6;">
             <div id="role-tree" style="padding-bottom: 20px"></div>
         </div>
@@ -77,7 +78,6 @@
         var $ = layui.$
             , tree = layui.tree
             , form = layui.form
-            , util = layui.util
             , table = layui.table;
 
 
@@ -162,12 +162,12 @@
             } else if (obj.event === 'edit') {
                 showEditModel(data);
             } else if (obj.event === 'auth') {
-                showRoleEditModel();
+                showRoleEditModel(data);
             }
         });
 
         /* 显示权限分配弹窗 */
-        function showRoleEditModel() {
+        function showRoleEditModel(roleData) {
             var layerForm = layer.open({
                 type: 1
                 , area: ['500px', '400px']
@@ -191,25 +191,22 @@
                     // 表单提交事件
                     form.on('submit(roleAssignEditSubmit)', function (data) {
                         //var checkedData = tree.getChecked('role-treeId'); //获取选中节点的数据
-                        var field = data.field;
-                        console.log(field);
-
-                        // var loadIndex = layer.load(2);
-                        // $.ajax({
-                        //     url: '/admin/role',
-                        //     type:'post',
-                        //     data: data,
-                        //     success: function (res) {
-                        //         if (res.code === 0) {
-                        //             layer.msg(res.msg, {icon: 1});
-                        //             layer.close(dIndex);
-                        //             roleTable.reload(); //数据刷新
-                        //             return;
-                        //         }
-                        //         layer.msg(res.msg, {icon: 2});
-                        //     }
-                        // });
-                        // layer.close(loadIndex);
+                        var field = Object.values(data.field).join(',');
+                        var loadIndex = layer.load(2);
+                        $.ajax({
+                            url: '/admin/role/setRoleMenu',
+                            type: 'post',
+                            data: {role_id: roleData.id, menu_ids: field},
+                            success: function (res) {
+                                if (res.code === 0) {
+                                    layer.msg(res.msg, {icon: 1});
+                                    layer.close(dIndex);
+                                    return;
+                                }
+                                layer.msg(res.msg, {icon: 2});
+                            }
+                        });
+                        layer.close(loadIndex);
                         return false;
                     });
                 }

@@ -4,7 +4,8 @@
 namespace app\admin\controller;
 
 use app\admin\business\AdminRole as AdminRoleBus;
-use app\admin\validate\AdminUserRole as AdminUserRoleValidate;
+use app\admin\business\AdminRoleMenu as AdminRoleMenuBus;
+use app\admin\validate\AdminRole as AdminUserRoleValidate;
 use app\common\basic\Result;
 use think\facade\Request;
 
@@ -112,5 +113,23 @@ class Role extends BaseAuth
         }
 
         return Result::error('删除失败');
+    }
+
+    // 设置角色菜单
+    public function setRoleMenu()
+    {
+        $data = Request::only(['role_id', 'menu_ids'], 'post');
+
+        $validate = new AdminUserRoleValidate();
+        if (!$validate->scene('role_menu')->check($data)) {
+            return Result::error($validate->getError());
+        }
+
+        $result = (new AdminRoleMenuBus())->setRoleMenu($data);
+        if ($result) {
+            return Result::success([], '操作成功');
+        }
+
+        return Result::error('操作失败');
     }
 }
