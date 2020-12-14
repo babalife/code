@@ -2,7 +2,7 @@
 
 namespace app\admin\controller;
 
-use app\admin\business\Menu as MenuBus;
+use app\admin\business\AdminMenu as MenuBus;
 use app\common\basic\Arr;
 
 class Index extends BaseAuth

@@ -4,7 +4,7 @@
 namespace app\admin\model;
 
 
-class AdminUserRole extends BaseModel
+class AdminRole extends BaseModel
 {
 
 }

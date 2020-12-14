@@ -2,9 +2,9 @@
 
 
 namespace app\admin\business;
-use app\admin\model\AdminUserRole as AdminUserRoleModel;
+use app\admin\model\AdminRole as AdminUserRoleModel;
 
-class AdminUserRole extends BaseBus
+class AdminRole extends BaseBus
 {
     public function __construct()
     {

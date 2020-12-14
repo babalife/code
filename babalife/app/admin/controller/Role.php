@@ -3,7 +3,7 @@
 
 namespace app\admin\controller;
 
-use app\admin\business\AdminUserRole as AdminUserRoleBus;
+use app\admin\business\AdminRole as AdminRoleBus;
 use app\admin\validate\AdminUserRole as AdminUserRoleValidate;
 use app\common\basic\Result;
 use think\facade\Request;
@@ -20,7 +20,7 @@ class Role extends BaseAuth
     // 列表数据
     public function list()
     {
-        $result = (new AdminUserRoleBus())->getPageList();
+        $result = (new AdminRoleBus())->getPageList();
         if ($result) {
             return Result::success($result);
         }
@@ -38,7 +38,7 @@ class Role extends BaseAuth
             return Result::error($validate->getError());
         }
 
-        $result = (new AdminUserRoleBus())->insertDate($data);
+        $result = (new AdminRoleBus())->insertDate($data);
         if ($result) {
             return Result::success([], '新增成功');
         }
@@ -54,7 +54,7 @@ class Role extends BaseAuth
             return Result::error($validate->getError());
         }
 
-        $menuInfo = (new AdminUserRoleBus())->getById($id);
+        $menuInfo = (new AdminRoleBus())->getById($id);
         if ($menuInfo) {
             return Result::success($menuInfo);
         }
@@ -72,7 +72,7 @@ class Role extends BaseAuth
             return Result::error($validate->getError());
         }
 
-        $result = (new AdminUserRoleBus())->updateById($id, $data);
+        $result = (new AdminRoleBus())->updateById($id, $data);
         if ($result) {
             return Result::success($result, '修改成功');
         }
@@ -88,7 +88,7 @@ class Role extends BaseAuth
             return Result::error($validate->getError());
         }
 
-        $result = (new AdminUserRoleBus())->delById($id);
+        $result = (new AdminRoleBus())->delById($id);
         if ($result) {
             return Result::success([], '删除成功');
         }
@@ -106,7 +106,7 @@ class Role extends BaseAuth
             return Result::error($validate->getError());
         }
 
-        $result = (new AdminUserRoleBus())->delByIds($ids);
+        $result = (new AdminRoleBus())->delByIds($ids);
         if ($result) {
             return Result::success([], '删除成功');
         }

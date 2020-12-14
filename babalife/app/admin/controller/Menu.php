@@ -4,8 +4,8 @@
 namespace app\admin\controller;
 
 use app\admin\validate\Menu as MenuValidate;
+use app\admin\business\AdminMenu as AdminMenuBus;
 use app\common\basic\Result;
-use app\admin\business\Menu as MenuBus;
 use think\facade\Request;
 
 // 菜单管理控制器
@@ -20,7 +20,10 @@ class Menu extends BaseAuth
     // 数据列表
     public function list()
     {
-        $lists = (new MenuBus())->getList('sort', 'asc');
+        $lists = (new AdminMenuBus())->getList('sort', 'asc');
+        foreach ($lists as &$list) {
+            $list['open']=true;
+        }
         if ($lists) {
             return json([
                 'code' => 0,
@@ -43,7 +46,7 @@ class Menu extends BaseAuth
             return Result::error($validate->getError());
         }
 
-        $result = (new MenuBus())->insertDate($data);
+        $result = (new AdminMenuBus())->insertDate($data);
         if ($result) {
             return Result::success([], '新增成功');
         }
@@ -61,7 +64,7 @@ class Menu extends BaseAuth
             return Result::error($validate->getError());
         }
 
-        $result = (new MenuBus())->updateById($id, $data);
+        $result = (new AdminMenuBus())->updateById($id, $data);
         if ($result) {
             return Result::success($result, '修改成功');
         }
@@ -77,7 +80,7 @@ class Menu extends BaseAuth
             return Result::error($validate->getError());
         }
 
-        $result = (new MenuBus())->delById($id);
+        $result = (new AdminMenuBus())->delById($id);
         if ($result) {
             return Result::success([], '删除成功');
         }
@@ -95,7 +98,7 @@ class Menu extends BaseAuth
             return Result::error($validate->getError());
         }
 
-        $result = (new MenuBus())->delByIds($ids);
+        $result = (new AdminMenuBus())->delByIds($ids);
         if ($result) {
             return Result::success([], '删除成功');
         }
@@ -108,7 +111,8 @@ class Menu extends BaseAuth
      */
     public function treeList()
     {
-        $list = (new MenuBus())->treeList();
+        $list = (new AdminMenuBus())->treeList();
+
         return Result::success($list);
     }
 }
