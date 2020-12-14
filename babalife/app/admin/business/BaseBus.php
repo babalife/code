@@ -11,10 +11,10 @@ class BaseBus
     protected $model = null;
 
     // 数据列表
-    public function getList($order = 'id', $sort = 'asc')
+    public function getList($order = 'id', $sort = 'asc', $field = '*')
     {
         try {
-            $result = $this->model->order($order, $sort)->select();
+            $result = $this->model->field($field)->order($order, $sort)->select();
         } catch (\Exception $e) {
             $result = [];
         }
@@ -23,10 +23,10 @@ class BaseBus
     }
 
     // 数据分页列表
-    public function getPageList($limit = 10)
+    public function getPageList($limit = 10, $field = '*')
     {
         try {
-            $result = $this->model->order('id', 'asc')->paginate($limit);
+            $result = $this->model->field($field)->order('id', 'asc')->paginate($limit);
         } catch (\Exception $e) {
             $result = [];
         }
@@ -47,10 +47,10 @@ class BaseBus
     }
 
     // 指定ID查询
-    public function getById($id)
+    public function getById($id, $field = '*')
     {
         try {
-            $result = $this->model->find($id);
+            $result = $this->model->field($field)->find($id);
         } catch (\Exception $e) {
             $result = [];
         }
