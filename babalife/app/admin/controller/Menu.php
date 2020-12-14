@@ -102,4 +102,13 @@ class Menu extends BaseAuth
 
         return Result::error('删除失败');
     }
+
+    /**
+     *  菜单tree列表
+     */
+    public function treeList()
+    {
+        $list = (new MenuBus())->treeList();
+        return Result::success($list);
+    }
 }

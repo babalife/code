@@ -4,6 +4,7 @@
 namespace app\admin\business;
 
 use app\admin\model\Menu as MenuModel;
+use app\common\basic\Arr;
 
 // 菜单管理业务逻辑
 class Menu extends BaseBus
@@ -14,40 +15,11 @@ class Menu extends BaseBus
         $this->model = new MenuModel();
     }
 
-    // 分页查询
-    public function getMenuPageLists($page = 10)
-    {
-        try {
-            $lists = $this->model->where('pid', 0)->order('sort', 'asc')->paginate($page);
-            if ($lists) {
-                $lists = $lists->toArray();
-                $listsChild = $this->model->whereIn('pid', implode(',', array_column($lists['data'], 'id')))->select()->toArray();
-                $lists['data'] = array_merge($lists['data'], $listsChild);
-            }
-        } catch (\Exception $e) {
-            $lists = [];
-        }
-
-        return $lists;
-    }
-
-    // 一级菜单查询
-    public function getTopMenuLists()
-    {
-        try {
-            $lists = $this->model->order('sort', 'asc')->where('pid', 0)->select();
-        } catch (\Exception $e) {
-            $lists = [];
-        }
-
-        return $lists ? $lists->toArray() : $lists;
-    }
-
     // 所有菜单查询
-    public function getMenuNormalLists()
+    public function getMenuNormalLists($filed = '*')
     {
         try {
-            $lists = $this->model->order('sort', 'asc')->where('status', 1)->select();
+            $lists = $this->model->field($filed)->order('sort', 'asc')->where('status', 1)->select();
         } catch (\Exception $e) {
             $lists = [];
         }
@@ -78,5 +50,21 @@ class Menu extends BaseBus
             $result = [];
         }
         return $result;
+    }
+
+    // 菜单树，数据列表
+    public function treeList()
+    {
+        try {
+            // 获取正常数据
+            $filed = 'name as title, id, pid';
+            $list = $this->getMenuNormalLists($filed);
+            // 组成tree树
+            $list = Arr::getTree($list, 'pid', 'children');
+        } catch (\Exception $e) {
+            $list = [];
+        }
+
+        return $list;
     }
 }

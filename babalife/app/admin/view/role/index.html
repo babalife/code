@@ -54,13 +54,12 @@
 
 <!-- 分配权限 -->
 <script type="text/html" id="roleAssignDialog">
-    <form id="roleAssignEditForm" lay-filter="roleAssignEditForm" class="layui-form model-form"
-          style="padding: 20px 20px 0 0;">
-        <div class="layui-form-item">
-            <div id="role-tree"></div>
+    <form id="roleAssignEditForm" lay-filter="roleAssignEditForm" class="layui-form model-form" style="height: 100%; padding: 10px 10px 0 10px;">
+        <div class="layui-form-item" style="height: 78%; overflow: scroll; border-bottom: 1px solid #e6e6e6;">
+            <div id="role-tree" style="padding-bottom: 20px"></div>
         </div>
 
-        <div class="layui-form-item text-right">
+        <div class="layui-form-item" style="position: absolute; right: 20px; bottom: 0px;">
             <button class="layui-btn" lay-filter="roleAssignEditSubmit" lay-submit>保存</button>
             <button class="layui-btn layui-btn-primary closeDialog" type="button">取消</button>
         </div>
@@ -167,64 +166,24 @@
             }
         });
 
-        // 模拟数据
-        var data1 = [{
-            title: '江西'
-            , id: 1
-            , children: [{
-                title: '南昌'
-                , id: 1000
-                , children: [{
-                    title: '青山湖区'
-                    , id: 10001
-                }, {
-                    title: '高新区'
-                    , id: 10002
-                }]
-            }, {
-                title: '九江'
-                , id: 1001
-            }, {
-                title: '赣州'
-                , id: 1002
-            }]
-        }, {
-            title: '广西'
-            , id: 2
-            , children: [{
-                title: '南宁'
-                , id: 2000
-            }, {
-                title: '桂林'
-                , id: 2001
-            }]
-        }, {
-            title: '陕西'
-            , id: 3
-            , children: [{
-                title: '西安'
-                , id: 3000
-            }, {
-                title: '延安'
-                , id: 3001
-            }]
-        }]
-
         /* 显示权限分配弹窗 */
         function showRoleEditModel() {
             var layerForm = layer.open({
                 type: 1
-                , area: ['500px', '300px']
+                , area: ['500px', '400px']
                 , title: '权限分配'
                 , content: $('#roleAssignDialog').html()
                 , success: function (layero, dIndex) {
-                    //权限树渲染
-                    tree.render({
-                        elem: '#role-tree'
-                        , data: data1
-                        , id: 'role-treeId'
-                        , showCheckbox: true,  //是否显示复选框
+                    $.get('/admin/menu/treeList').then(res => {
+                        //权限树渲染
+                        tree.render({
+                            elem: '#role-tree'
+                            , data: res.data
+                            , id: 'role-treeId'
+                            , showCheckbox: true,  //是否显示复选框
+                        });
                     });
+
                     // 关闭弹窗事件
                     $('.closeDialog').on("click", function () {
                         layer.close(layerForm);
