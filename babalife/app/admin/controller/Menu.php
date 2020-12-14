@@ -111,8 +111,8 @@ class Menu extends BaseAuth
      */
     public function treeList()
     {
-        $list = (new AdminMenuBus())->treeList();
-
+        $id = input('param.id');
+        $list = (new AdminMenuBus())->treeList($id);
         return Result::success($list);
     }
 }

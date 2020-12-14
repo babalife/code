@@ -4,6 +4,7 @@
 namespace app\admin\business;
 
 use app\admin\model\AdminMenu as MenuModel;
+use app\admin\business\AdminRoleMenu as AdminRoleMenuBus;
 use app\common\basic\Arr;
 
 // 菜单管理业务逻辑
@@ -53,18 +54,26 @@ class AdminMenu extends BaseBus
     }
 
     // 菜单树，数据列表
-    public function treeList()
+    public function treeList($id = 0)
     {
         try {
             // 获取正常数据
             $filed = 'name as title, id, pid';
             $list = $this->getMenuNormalLists($filed);
-            foreach ($list as &$item) {
-                $item['spread'] = true;
+            $roleMenu = (new AdminRoleMenuBus())->getByRoleId($id);
+            $noChecked = array_values(array_column($list, 'pid'));
+            foreach ($list as $index => $item) {
+                $list[$index]['spread'] = true;
+                if ($roleMenu && strpos($roleMenu['menu_ids'], (string)$item['id']) !== false) {
+                    if (!in_array($item['id'], $noChecked)) {
+                        $list[$index]['checked'] = true;
+                    }
+                }
             }
             // 组成tree树
             $list = Arr::getTree($list, 'pid', 'children');
         } catch (\Exception $e) {
+            halt($e->getMessage());
             $list = [];
         }
 
