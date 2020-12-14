@@ -32,7 +32,6 @@
 <!-- 表单弹窗 -->
 <script type="text/html" id="roleEditDialog">
     <form id="roleEditForm" lay-filter="roleEditForm" class="layui-form model-form" style="padding: 20px 20px 0 0;">
-        <input name="roleId" type="hidden"/>
         <div class="layui-form-item">
             <label class="layui-form-label layui-form-required">角色名:</label>
             <div class="layui-input-block">
@@ -52,6 +51,21 @@
         </div>
     </form>
 </script>
+
+<!-- 分配权限 -->
+<script type="text/html" id="roleAssignDialog">
+    <form id="roleAssignEditForm" lay-filter="roleAssignEditForm" class="layui-form model-form"
+          style="padding: 20px 20px 0 0;">
+        <div class="layui-form-item">
+            <div id="role-tree"></div>
+        </div>
+
+        <div class="layui-form-item text-right">
+            <button class="layui-btn" lay-filter="roleAssignEditSubmit" lay-submit>保存</button>
+            <button class="layui-btn layui-btn-primary closeDialog" type="button">取消</button>
+        </div>
+    </form>
+</script>
 {/block}
 
 {block name="footer_js"}
@@ -60,14 +74,17 @@
         base: '__LAYUIADMIN__/' //静态资源所在路径
     }).extend({
         index: 'lib/index' //主入口模块
-    }).use(['index', 'table'], function () {
+    }).use(['index', 'table', 'tree', 'util'], function () {
         var $ = layui.$
+            , tree = layui.tree
             , form = layui.form
+            , util = layui.util
             , table = layui.table;
+
 
         var roleTable = table.render({
             elem: '#LAY-user-back-role'
-            , url: '/admin/role/list' //模拟接口
+            , url: '/admin/role/list'
             , page: true //开启分页
             , parseData: function (res) { //res 即为原始返回的数据
                 return {
@@ -135,18 +152,110 @@
                             if (res.code === 0) {
                                 obj.del();
                                 layer.close(index);
-                                layer.msg(res.msg,{icon: 1});
+                                layer.msg(res.msg, {icon: 1});
                                 return;
                             }
-                            layer.msg(res.msg,{icon: 2});
+                            layer.msg(res.msg, {icon: 2});
                         }
                     })
 
                 });
             } else if (obj.event === 'edit') {
                 showEditModel(data);
+            } else if (obj.event === 'auth') {
+                showRoleEditModel();
             }
         });
+
+        // 模拟数据
+        var data1 = [{
+            title: '江西'
+            , id: 1
+            , children: [{
+                title: '南昌'
+                , id: 1000
+                , children: [{
+                    title: '青山湖区'
+                    , id: 10001
+                }, {
+                    title: '高新区'
+                    , id: 10002
+                }]
+            }, {
+                title: '九江'
+                , id: 1001
+            }, {
+                title: '赣州'
+                , id: 1002
+            }]
+        }, {
+            title: '广西'
+            , id: 2
+            , children: [{
+                title: '南宁'
+                , id: 2000
+            }, {
+                title: '桂林'
+                , id: 2001
+            }]
+        }, {
+            title: '陕西'
+            , id: 3
+            , children: [{
+                title: '西安'
+                , id: 3000
+            }, {
+                title: '延安'
+                , id: 3001
+            }]
+        }]
+
+        /* 显示权限分配弹窗 */
+        function showRoleEditModel() {
+            var layerForm = layer.open({
+                type: 1
+                , area: ['500px', '300px']
+                , title: '权限分配'
+                , content: $('#roleAssignDialog').html()
+                , success: function (layero, dIndex) {
+                    //权限树渲染
+                    tree.render({
+                        elem: '#role-tree'
+                        , data: data1
+                        , id: 'role-treeId'
+                        , showCheckbox: true,  //是否显示复选框
+                    });
+                    // 关闭弹窗事件
+                    $('.closeDialog').on("click", function () {
+                        layer.close(layerForm);
+                    })
+                    // 表单提交事件
+                    form.on('submit(roleAssignEditSubmit)', function (data) {
+                        //var checkedData = tree.getChecked('role-treeId'); //获取选中节点的数据
+                        var field = data.field;
+                        console.log(field);
+
+                        // var loadIndex = layer.load(2);
+                        // $.ajax({
+                        //     url: '/admin/role',
+                        //     type:'post',
+                        //     data: data,
+                        //     success: function (res) {
+                        //         if (res.code === 0) {
+                        //             layer.msg(res.msg, {icon: 1});
+                        //             layer.close(dIndex);
+                        //             roleTable.reload(); //数据刷新
+                        //             return;
+                        //         }
+                        //         layer.msg(res.msg, {icon: 2});
+                        //     }
+                        // });
+                        // layer.close(loadIndex);
+                        return false;
+                    });
+                }
+            });
+        }
 
         /* 显示表单弹窗 */
         function showEditModel(mData) {
