@@ -73,7 +73,6 @@ class AdminMenu extends BaseBus
             // 组成tree树
             $list = Arr::getTree($list, 'pid', 'children');
         } catch (\Exception $e) {
-            halt($e->getMessage());
             $list = [];
         }
 
