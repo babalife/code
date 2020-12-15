@@ -1,0 +1,155 @@
+{extend name="layout/basic" /}
+
+<!--标题-->
+{block name="title"}用户管理{/block}
+
+<!--样式-->
+{block name="css"}{/block}
+
+<!--正文-->
+{block name="content"}
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <!-- 表格工具栏 -->
+            <form class="layui-form toolbar">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">账&emsp;号:</label>
+                        <div class="layui-input-inline">
+                            <input name="username" class="layui-input" placeholder="输入账号" autocomplete="off"/>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">用户名:</label>
+                        <div class="layui-input-inline">
+                            <input name="nick_name" class="layui-input" placeholder="输入用户名" autocomplete="off"/>
+                        </div>
+                    </div>
+                    <div class="layui-inline">&emsp;
+                        <button class="layui-btn icon-btn" lay-filter="table-admin-search" lay-submit>
+                            <i class="layui-icon">&#xe615;</i>搜索
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- 表格 -->
+            <table class="layui-hide" id="table-admin-user" lay-filter="table-admin-user"></table>
+
+            <!-- 表头工具条 -->
+            <script type="text/html" id="table-admin-toolbar">
+                <p>
+                    <button lay-event="add" class="layui-btn layui-btn-sm icon-btn">
+                        <i class="layui-icon">&#xe654;</i>添加
+                    </button>&nbsp;
+                    <button lay-event="del" class="layui-btn layui-btn-sm layui-btn-danger icon-btn">
+                        <i class="layui-icon">&#xe640;</i>删除
+                    </button>
+                </p>
+            </script>
+
+            <!-- 表行工具条 -->
+            <script type="text/html" id="table-admin-user-bar">
+                <a class="layui-btn layui-btn-default layui-btn-xs" lay-event="edit">修改</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="reset">重置密码</a>
+            </script>
+        </div>
+    </div>
+</div>
+
+<!-- 用户表单弹窗 -->
+
+{/block}
+
+<!--脚本-->
+{block name="footer_js"}
+<script>
+    layui.config({
+        base: '__LAYUIADMIN__/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'table', 'form'], function () {
+        var table = layui.table;
+        // var admin = layui.admin;
+        var form = layui.form;
+        var util = layui.util;
+
+        var insTb = table.render({
+            elem: '#table-admin-user'
+            , url: '/admin/user/list'
+            , parseData: function (res) {
+                return {
+                    code: res.code,
+                    msg: res.msg,
+                    count: res.data.total,
+                    data: res.data.data
+                };
+            }
+            // 头部工具栏右侧按钮
+            , defaultToolbar: ['filter', 'exports']
+            // 头部工具栏左侧自定义工具条
+            , toolbar: '#table-admin-toolbar'
+            , cellMinWidth: 100
+            , cols: [[
+                {type: 'checkbox'}
+                , {type: 'numbers'}
+                , {field: 'username', title: '账号'}
+                , {field: 'nick_name', title: '用户名'}
+                , {field: 'role', title: '角色'}
+                , {
+                    field: 'create_time', title: '创建时间', width: 170, templet: function (d) {
+                        return util.toDateString(d.create_time);
+                    }
+                }
+                , {field: 'status', width: 100, title: '状态'}
+                , {title: '操作', width: 190, toolbar: '#table-admin-user-bar'}
+            ]]
+            , page: true
+        });
+
+        /* 表格搜索 */
+        form.on('submit(table-admin-search)', function (data) {
+            insTb.reload({where: data.field, page: {curr: 1}});
+            return false;
+        });
+
+        /* 表格行工具条点击事件 */
+        table.on('tool(table-admin-user)', function (obj) {
+            if (obj.event === 'edit') { // 修改
+                console.log('edit')
+            } else if (obj.event === 'del') { // 删除
+                layer.confirm('确定删除吗？', {icon: 2}, function (index) {
+                    console.log('del')
+                    obj.del();
+                    layer.close(index);
+                });
+            } else if (obj.event === 'reset') { // 重置密码
+                console.log('reset')
+            }
+        });
+
+        /* 表格头工具栏点击事件 */
+        table.on('toolbar(table-admin-user)', function (obj) {
+            if (obj.event === 'add') { // 添加
+                console.log('add')
+            } else if (obj.event === 'del') { // 删除
+                var checkRows = table.checkStatus('table-admin-user');
+                if (checkRows.data.length === 0) {
+                    layer.msg('请选择要删除的数据', {icon: 2});
+                    return;
+                }
+                var ids = checkRows.data.map(function (d) {
+                    return d.id;
+                });
+                layer.confirm('确定删除吗？', {icon: 2}, function (index) {
+                    console.log(ids)
+                    obj.del();
+                    layer.close(index);
+                });
+            }
+        });
+    });
+</script>
+{/block}

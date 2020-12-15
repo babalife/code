@@ -10,8 +10,13 @@
 
 namespace app\admin\business;
 
+use app\admin\model\AdminUser as AdminUserModel;
+
 
 class AdminUser extends BaseBus
 {
-
+    public function __construct()
+    {
+        $this->model = new AdminUserModel();
+    }
 }
