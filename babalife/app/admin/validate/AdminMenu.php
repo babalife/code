@@ -6,7 +6,7 @@ namespace app\admin\validate;
 
 use think\Validate;
 
-class Menu extends Validate
+class AdminMenu extends Validate
 {
     //校验规则
     protected $rule = [

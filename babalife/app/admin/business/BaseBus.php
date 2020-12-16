@@ -31,7 +31,7 @@ class BaseBus
             $result = [];
         }
 
-        return $result;
+        return $result?$result->toArray():$result;
     }
 
     // 新增数据
@@ -56,6 +56,18 @@ class BaseBus
         }
 
         return $result;
+    }
+
+    // 指定IDS查询
+    public function getByIds($ids, $field = '*')
+    {
+        try {
+            $result = $this->model->whereIn('id', $ids)->field($field)->select();
+        } catch (\Exception $e) {
+            $result = [];
+        }
+
+        return $result?$result->toArray():$result;
     }
 
     // 指定ID删除

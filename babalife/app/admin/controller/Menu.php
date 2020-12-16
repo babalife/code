@@ -3,7 +3,7 @@
 
 namespace app\admin\controller;
 
-use app\admin\validate\Menu as MenuValidate;
+use app\admin\validate\AdminMenu as MenuValidate;
 use app\admin\business\AdminMenu as AdminMenuBus;
 use app\common\basic\Result;
 use think\facade\Request;

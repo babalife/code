@@ -11,6 +11,7 @@
 namespace app\admin\business;
 
 use app\admin\model\AdminUser as AdminUserModel;
+use app\admin\model\AdminUserRole as AdminUserRoleModel;
 
 
 class AdminUser extends BaseBus
@@ -18,5 +19,11 @@ class AdminUser extends BaseBus
     public function __construct()
     {
         $this->model = new AdminUserModel();
+    }
+
+
+    public function getPageLists()
+    {
+        $list = $this->model->select();
     }
 }

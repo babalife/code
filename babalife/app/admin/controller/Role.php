@@ -47,22 +47,6 @@ class Role extends BaseAuth
         return Result::error('新增失败');
     }
 
-    // 编辑
-    public function edit($id)
-    {
-        $validate = new AdminUserRoleValidate();
-        if (!$validate->scene('id')->check(['id' => $id])) {
-            return Result::error($validate->getError());
-        }
-
-        $menuInfo = (new AdminRoleBus())->getById($id);
-        if ($menuInfo) {
-            return Result::success($menuInfo);
-        }
-
-        return Result::error('获取失败');
-    }
-
     // 修改
     public function update($id)
     {
