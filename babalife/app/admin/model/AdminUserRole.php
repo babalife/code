@@ -13,14 +13,4 @@ namespace app\admin\model;
 
 class AdminUserRole extends BaseModel
 {
-    public function role()
-    {
-        return $this->hasOne(AdminRole::class, 'id', 'role_id');
-    }
-
-    // 根据用户id获取角色信息
-    public function getRoleByUserIds($ids)
-    {
-        return $this->with('role')->whereIn('user_id', $ids)->select();
-    }
 }

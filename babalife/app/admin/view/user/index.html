@@ -60,6 +60,34 @@
 </div>
 
 <!-- 用户表单弹窗 -->
+<script type="text/html" id="userEditDialog">
+    <form id="userEditForm" lay-filter="userEditForm" class="layui-form model-form" style="padding: 20px 30px 0 0 ;">
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">账号:</label>
+            <div class="layui-input-block">
+                <input name="username" placeholder="请输入账号" class="layui-input"
+                       lay-verify="required" required/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">用户名:</label>
+            <div class="layui-input-block">
+                <input name="nick_name" placeholder="请输入用户名" class="layui-input"
+                       ay-verify="required" required/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">角色:</label>
+            <div class="layui-input-block">
+                <div id="userEditRoleSel"></div>
+            </div>
+        </div>
+        <div class="layui-form-item text-right">
+            <button class="layui-btn" lay-filter="userEditDialogSubmit" lay-submit>保存</button>
+            <button class="layui-btn layui-btn-primary closeDialog" type="button">取消</button>
+        </div>
+    </form>
+</script>
 
 {/block}
 
@@ -69,17 +97,18 @@
     layui.config({
         base: '__LAYUIADMIN__/' //静态资源所在路径
     }).extend({
-        index: 'lib/index' //主入口模块
-    }).use(['index', 'table', 'form'], function () {
+        index: 'lib/index', //主入口模块
+        xmSelect: '{/}__LAYUIADMIN__/lib/extend/xmSelect/xmSelect',
+    }).use(['index', 'table', 'form', 'xmSelect'], function () {
         var $ = layui.jquery;
         var table = layui.table;
-        // var admin = layui.admin;
         var form = layui.form;
+        var xmSelect = layui.xmSelect;
         var util = layui.util;
 
         var insTb = table.render({
             elem: '#table-admin-user'
-            , url: '/admin/user/list'
+            , url: '/admin/user/pageList'
             , parseData: function (res) {
                 return {
                     code: res.code,
@@ -101,7 +130,7 @@
                 , {field: 'role_name', title: '角色'}
                 , {
                     field: 'create_time', title: '创建时间', width: 170, templet: function (d) {
-                        return util.toDateString(d.create_time);
+                        return util.toDateString(d.create_time * 1000);
                     }
                 }
                 , {
@@ -144,12 +173,20 @@
         /* 表格行工具条点击事件 */
         table.on('tool(table-admin-user)', function (obj) {
             if (obj.event === 'edit') { // 修改
-                console.log('edit')
+                showEditModel(obj.data);
             } else if (obj.event === 'del') { // 删除
                 layer.confirm('确定删除吗？', {icon: 2}, function (index) {
-                    console.log('del')
-                    obj.del();
-                    layer.close(index);
+                    $.ajax({
+                        url: '/admin/user/' + obj.data.id,
+                        type: 'delete',
+                        success: function (res) {
+                            if (res.code === 0) {
+                                obj.del();
+                                layer.close(index); //关闭弹层
+                            }
+                            layer.msg(res.msg);
+                        }
+                    })
                 });
             } else if (obj.event === 'reset') { // 重置密码
                 console.log('reset')
@@ -158,24 +195,86 @@
 
         /* 表格头工具栏点击事件 */
         table.on('toolbar(table-admin-user)', function (obj) {
-            if (obj.event === 'add') { // 添加
-                console.log('add')
-            } else if (obj.event === 'del') { // 删除
-                var checkRows = table.checkStatus('table-admin-user');
-                if (checkRows.data.length === 0) {
-                    layer.msg('请选择要删除的数据', {icon: 2});
-                    return;
-                }
-                var ids = checkRows.data.map(function (d) {
-                    return d.id;
-                });
-                layer.confirm('确定删除吗？', {icon: 2}, function (index) {
-                    console.log(ids)
-                    obj.del();
-                    layer.close(index);
-                });
+            switch (obj.event) {
+                case 'add': //添加
+                    showEditModel();
+                    break;
+                case 'del': //删除
+                    var checkRows = table.checkStatus('table-admin-user');
+                    if (checkRows.data.length === 0) {
+                        layer.msg('请选择要删除的数据', {icon: 2});
+                        return;
+                    }
+                    var ids = checkRows.data.map((item) => item.id).join(',');
+                    layer.confirm('确定删除吗？', {icon: 2, title: '警告'}, function (index) {
+                        $.ajax({
+                            url: '/admin/user',
+                            type: 'delete',
+                            data: {ids},
+                            success: function (res) {
+                                if (res.code === 0) {
+                                    insTb.reload();
+                                    layer.close(index); //关闭弹层
+                                }
+                                layer.msg(res.msg, {icon: 1});
+                            }
+                        })
+                    });
+                    break;
             }
         });
+
+        // 显示弹窗表单
+        function showEditModel(formData) {
+            var layerForm = layer.open({
+                type: 1,
+                title: (formData ? '修改' : '添加') + '用户',
+                content: $('#userEditDialog').html(),
+                success: function (layero, dIndex) {
+                    // 回显表单数据
+                    form.val('userEditForm', formData);
+                    // 表单关闭事件
+                    $('.closeDialog').on("click", function () {
+                        layer.close(layerForm);
+                    })
+                    // 表单提交事件
+                    form.on('submit(userEditDialogSubmit)', function (data) {
+                        var loadIndex = layer.load(2);
+                        $.ajax({
+                            url: formData ? '/admin/user/' + formData.id : '/admin/user',
+                            type: formData ? 'put' : 'post',
+                            data: data.field,
+                            success: function (res) {
+                                if (res.code === 0) {
+                                    layer.msg(res.msg, {icon: 1});
+                                    layer.close(dIndex);
+                                    insTb.reload();
+                                    return;
+                                }
+                                layer.msg(res.msg, {icon: 2});
+                            }
+                        });
+                        layer.close(loadIndex);
+                        return false;
+                    });
+                    $.get('/admin/role/list').then(res => {
+                        // 渲染多选下拉框
+                        var insRoleSel = xmSelect.render({
+                            el: '#userEditRoleSel',
+                            name: 'role_id',
+                            layVerify: 'required',
+                            data: res.data,
+                            initValue: formData ? [formData.role_id] : [res.data[0]['value']],
+                            radio: true,
+                            clickClose: true,
+                            model: {label: {type: 'text'}},
+                        });
+                    })
+                    // 禁止弹窗出现滚动条
+                    $(layero).children('.layui-layer-content').css('overflow', 'visible');
+                }
+            });
+        }
     });
 </script>
 {/block}

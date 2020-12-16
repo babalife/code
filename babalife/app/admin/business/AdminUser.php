@@ -25,7 +25,7 @@ class AdminUser extends BaseBus
     // 查询用户列表
     public function getPageLists($limit = 10)
     {
-        $field = 'u.*, r.name as role_name';
+        $field = 'u.*, r.name as role_name, r.id as role_id';
         try {
             $list = Db::name('admin_user')
                 ->alias('u')

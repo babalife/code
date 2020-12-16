@@ -43,7 +43,7 @@ class BaseBus
             $result = [];
         }
 
-        return $result;
+        return $this->model->id;
     }
 
     // 指定ID查询

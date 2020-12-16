@@ -18,10 +18,21 @@ class Role extends BaseAuth
         return view();
     }
 
-    // 列表数据
-    public function list()
+    // 分页列表数据
+    public function pageList()
     {
         $result = (new AdminRoleBus())->getPageList();
+        if ($result) {
+            return Result::success($result);
+        }
+
+        return Result::error('获取失败');
+    }
+
+    // 列表数据查询
+    public function list()
+    {
+        $result = (new AdminRoleBus())->getList('id','asc','name, id as value');
         if ($result) {
             return Result::success($result);
         }
