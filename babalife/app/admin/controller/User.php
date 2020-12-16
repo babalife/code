@@ -26,7 +26,7 @@ class User extends BaseAuth
     // 查询用户
     public function list()
     {
-        $list = (new AdminUserBus())->getPageList();
+        $list = (new AdminUserBus())->getPageLists();
         return Result::success($list);
     }
 
@@ -51,7 +51,7 @@ class User extends BaseAuth
     // 修改
     public function update($id)
     {
-        $data = Request::only(['id', 'username', 'nick_name', 'role_id'], 'post');
+        $data = Request::only(['id', 'username', 'nick_name', 'role_id', 'status'], 'post');
 
         $validate = new AdminUserValidate();
         if (!$validate->scene('id')->check(['id' => $id])) {

@@ -71,6 +71,7 @@
     }).extend({
         index: 'lib/index' //主入口模块
     }).use(['index', 'table', 'form'], function () {
+        var $ = layui.jquery;
         var table = layui.table;
         // var admin = layui.admin;
         var form = layui.form;
@@ -97,16 +98,41 @@
                 , {type: 'numbers'}
                 , {field: 'username', title: '账号'}
                 , {field: 'nick_name', title: '用户名'}
-                , {field: 'name', title: '角色'}
+                , {field: 'role_name', title: '角色'}
                 , {
                     field: 'create_time', title: '创建时间', width: 170, templet: function (d) {
                         return util.toDateString(d.create_time);
                     }
                 }
-                , {field: 'status', width: 100, title: '状态'}
+                , {
+                    title: '状态', templet: function (d) {
+                        return [
+                            '<input type="checkbox" lay-filter="status" data-id="' + d.id + '" name="status" lay-skin="switch" lay-text="启用|停用">',
+                            '<input type="checkbox" lay-filter="status" data-id="' + d.id + '" name="status" lay-skin="switch" lay-text="启用|停用" checked>'
+                        ][d.status];
+                    }, align: 'center', width: 100
+                }
                 , {title: '操作', width: 190, toolbar: '#table-admin-user-bar'}
             ]]
             , page: true
+        });
+
+        // 修改菜单状态
+        form.on('switch(status)', function (data) {
+            var id = data.elem['dataset'].id;
+            var status = data.elem.checked ? 1 : 0;
+            $.ajax({
+                url: '/admin/user/' + id,
+                type: 'put',
+                data: {status},
+                success: function (res) {
+                    if (res.code === 0) {
+                        layer.msg(res.msg, {icon: 1});
+                        return;
+                    }
+                    layer.msg(res.msg, {icon: 2});
+                }
+            })
         });
 
         /* 表格搜索 */
