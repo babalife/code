@@ -12,6 +12,7 @@ namespace app\admin\business;
 
 use app\admin\model\AdminUser as AdminUserModel;
 use app\admin\model\AdminUserRole as AdminUserRoleModel;
+use think\facade\Db;
 
 
 class AdminUser extends BaseBus
@@ -21,9 +22,20 @@ class AdminUser extends BaseBus
         $this->model = new AdminUserModel();
     }
 
-
-    public function getPageLists()
+    // 查询用户列表
+    public function getPageList($limit = 10, $field = '*')
     {
-        $list = $this->model->select();
+        try {
+            $list = Db::name('admin_user')
+                ->alias('u')
+                ->join('admin_user_role ur', 'ur.user_id = u.id', 'left')
+                ->join('admin_role r', 'r.id = ur.role_id', 'left')
+                ->field($field)
+                ->paginate($limit);
+        } catch (\Exception $e) {
+            $list = [];
+        }
+
+        return $list ? $list->toArray() : $list;
     }
 }

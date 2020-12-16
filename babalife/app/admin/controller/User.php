@@ -26,7 +26,7 @@ class User extends BaseAuth
     // 查询用户
     public function list()
     {
-        $list = (new AdminUserBus())->getPageLists();
+        $list = (new AdminUserBus())->getPageList();
         return Result::success($list);
     }
 
