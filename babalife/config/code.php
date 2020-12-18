@@ -11,7 +11,12 @@ return [
     'result' => [
         'success' => 0,
         'error' => 1
-    ]
+    ],
 
+    // mysql 状态码
+    'mysql' => [
+        'table_normal' => 1,
+        'table_peddling' => 0
+    ]
 
 ];

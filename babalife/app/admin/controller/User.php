@@ -14,6 +14,7 @@ use app\admin\business\AdminUser as AdminUserBus;
 use app\admin\business\AdminUserRole as AdminUserRoleBus;
 use app\admin\validate\AdminUser as AdminUserValidate;
 use app\common\basic\Result;
+use app\common\basic\Str;
 use think\facade\Request;
 
 class User extends BaseAuth
@@ -44,12 +45,6 @@ class User extends BaseAuth
         if (!$validate->scene('save')->check($data)) {
             return Result::error($validate->getError());
         }
-        $time = time();
-        $roleId = $data['role_id'];
-        unset($data['role_id']);
-
-        $data['last_login_ip'] = \request()->ip();
-        $data['password'] = md5(md5('admin'));
 
         $result = (new AdminUserBus())->insertDate($data);
         $roleResult = (new AdminUserRoleBus())->insertDate(['user_id' => $result, 'role_id' => $roleId]);
@@ -116,5 +111,28 @@ class User extends BaseAuth
         }
 
         return Result::error('删除失败');
+    }
+
+    // 重置密码
+    public function reset()
+    {
+        $id = input('post.id', '', 'intval');
+
+        $validate = new AdminUserValidate();
+        if (!$validate->scene('id')->check(['id' => $id])) {
+            return Result::error($validate->getError());
+        }
+
+        $time = time();
+        $updateData = [
+            'create_time' => $time,
+            'password' => Str::userEncrypt('123456', $time)
+        ];
+        $result = (new AdminUserBus())->updateById($id,$updateData);
+        if ($result) {
+            return Result::success([], '重置成功');
+        }
+
+        return Result::error('重置失败');
     }
 }
