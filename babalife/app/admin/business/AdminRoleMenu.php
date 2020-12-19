@@ -11,6 +11,7 @@
 namespace app\admin\business;
 
 use app\admin\model\AdminRoleMenu as AdminRoleMenuModel;
+use function mysql_xdevapi\getSession;
 
 class AdminRoleMenu extends BaseBus
 {
@@ -52,7 +53,7 @@ class AdminRoleMenu extends BaseBus
     // 得到登录的角色菜单ids
     public function getMenuIds()
     {
-        $adminUser =  session(config('code.session.admin'));
+        $adminUser = getSessionAdminUser();
         return (new AdminUserRole())->getMenuIdsByUserId($adminUser['id']);
     }
 }

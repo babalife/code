@@ -11,12 +11,15 @@ class BaseAuth extends Base
 {
     protected $user = null;
 
+    // 菜单访问白名单
+    protected $menu_white = ['index', 'auth'];
+
     // 登录校验
     protected function initialize()
     {
         // 未登录
         if (!$this->isLogin()) {
-            redirect(url('/admin/login/index'))->send();
+            redirect(url('/admin/auth/login'))->send();
         }
 
         // 菜单权限校验
@@ -32,7 +35,7 @@ class BaseAuth extends Base
 //            return true;
 //        }
 
-        $user = session(config('code.session.admin'));
+        $user = getSessionAdminUser();
         if ($user && $user['id']) {
             $this->user = $user;
             return true;
@@ -45,7 +48,7 @@ class BaseAuth extends Base
     public function isMenu()
     {
         $menu = strtolower(request()->controller());
-        if ($menu != 'index' && !in_array($menu, $this->user['authority'])) {
+        if (!in_array($menu, $this->menu_white) && !in_array($menu, $this->user['authority'])) {
             echo '无权限访问';
             exit;
         }

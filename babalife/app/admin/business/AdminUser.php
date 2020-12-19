@@ -33,14 +33,14 @@ class AdminUser extends BaseBus
             throw new Exception('该用户不存在');
         }
 
-        // 判断用户是否可用
-        if ($adminUser['status'] != config('code.mysql.table_normal')) {
-            throw new Exception('账号已停用');
-        }
-
         // 判断密码是否正确
         if (Str::userEncrypt($data['password']) != $adminUser['password']) {
             throw new Exception('密码错误');
+        }
+
+        // 判断用户是否可用
+        if ($adminUser['status'] != config('code.mysql.table_normal')) {
+            throw new Exception('账号已停用');
         }
 
         // 将需要信息记录 mysql 中
@@ -55,7 +55,7 @@ class AdminUser extends BaseBus
         }
 
         // 记录session
-        session(config('code.session.admin'), $adminUser);
+        setSessionAdminUser($adminUser);
         return true;
     }
 

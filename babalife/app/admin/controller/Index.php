@@ -26,7 +26,7 @@ class Index extends BaseAuth
             'menu' => [
                 ['name' => '基本资料', 'path' => '/admin/user/index'],
                 ['name' => '菜单管理', 'path' => '/admin/menu/index'],
-                ['name' => '退出', 'path' => '/admin/logout/index', 'top_line' => true],
+                ['name' => '退出', 'path' => '/admin/auth/logout', 'top_line' => true],
             ]
         ];
 
@@ -38,14 +38,12 @@ class Index extends BaseAuth
         $roleMenu = (new AdminRoleMenuBus())->getMenuIds();
         if (isset($roleMenu['menu']['menu_ids'])) {
 
-            // 存储菜单权限
-//            $menuList = (new MenuBus())->getNormalByIds($roleMenu['menu']['menu_ids']);
-//            halt($menuList);
-
             $menuList = (new MenuBus())->getMenuNormalListsByMenuIds('*', $roleMenu['menu']['menu_ids']);
-            $adminUser = session(config('code.session.admin'));
+
+            // 存储菜单权限
+            $adminUser = getSessionAdminUser();
             $adminUser['authority'] = array_column($menuList, 'authority');
-            session(config('code.session.admin'), $adminUser);
+            setSessionAdminUser($adminUser);
         }
 
         // 得到菜单树
