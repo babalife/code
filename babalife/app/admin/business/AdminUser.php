@@ -11,7 +11,7 @@
 namespace app\admin\business;
 
 use app\admin\model\AdminUser as AdminUserModel;
-use app\admin\model\AdminUserRole as AdminUserRoleModel;
+use app\common\basic\Result;
 use app\common\basic\Str;
 use think\Exception;
 use think\facade\Db;
@@ -58,13 +58,28 @@ class AdminUser extends BaseBus
     public function insertDate($data)
     {
         // 判断该用户是否存在
-        $this->getAdminUserByUsername($data['username'], config(''));
+        $adminUser = $this->getAdminUserByUsername($data['username']);
+        if ($adminUser) {
+            return Result::error('该账号已存在，请重新输入');
+        }
         // 组装要记录的数据
         // 用户和角色关联建立关系
     }
 
     // 根据账号查询用户信息
-    public function getAdminUserByUsername($username, $status)
+    public function getAdminUserByUsername($username)
+    {
+        try {
+            $result = $this->model
+                ->where('username', $username)
+                ->find();
+        } catch (\Exception $e) {
+            $result = [];
+        }
+
+        return $result;
+    }
+    public function getAdminUserNormalByUsername($username)
     {
         try {
             $result = $this->model
