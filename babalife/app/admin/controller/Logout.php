@@ -11,6 +11,6 @@ class Logout extends BaseAuth
     public function index()
     {
         session(config('code.session.admin'), null);
-        return Result::success([], '退出成功');
+        redirect(url('/admin/login/index'))->send();
     }
 }

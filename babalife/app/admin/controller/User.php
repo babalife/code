@@ -11,7 +11,6 @@
 namespace app\admin\controller;
 
 use app\admin\business\AdminUser as AdminUserBus;
-use app\admin\business\AdminUserRole as AdminUserRoleBus;
 use app\admin\validate\AdminUser as AdminUserValidate;
 use app\common\basic\Result;
 use app\common\basic\Str;

@@ -107,7 +107,14 @@ class AdminUser extends BaseBus
             unset($data['role_id']);
         }
 
-        return parent::updateById($id, $data);
+        // 修改成功，更新数据到session
+        $result = parent::updateById($id, $data);
+        if ($result) {
+            $adminUser = $this->getById($id);
+            session(config('code.session.admin'), $adminUser);
+        }
+
+        return $result;
     }
 
     // 根据账号查询用户信息

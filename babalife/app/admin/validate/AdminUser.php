@@ -21,19 +21,22 @@ class AdminUser extends Validate
         'username' => 'require',
         'nick_name' => 'require',
         'role_id' => 'require',
+        'password' => 'require',
     ];
 
     //提示消息
     protected $message = [
-        'id' => '用户编号必填',
-        'username' => '账号必须',
-        'nick_name' => '用户名称必须',
+        'id' => '用户编号不能为空',
+        'nick_name' => '用户名称不能为空',
         'role_id' => '角色编号必须',
+        'username' => '账号不能为空',
+        'password' => '密码不能为空',
     ];
 
     //校验条件
     protected $scene = [
-        'save' => ['name', 'nick_name', 'role_id'],
+        'save' => ['username', 'nick_name', 'role_id'],
+        'login' => ['username', 'password'],
         'id' => ['id']
     ];
 }

@@ -20,7 +20,7 @@ class Index extends BaseAuth
         // 顶部数据
         $headInfo = [
             // 管理员名称
-            'name' => $this->user['name'],
+            'name' => $this->user['nick_name'],
             // 菜单，可设置上下分割线，top_line/bottom_line
             'menu' => [
                 ['name' => '基本资料', 'path' => '/admin/user/index'],
