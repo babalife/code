@@ -116,7 +116,9 @@ class AdminUser extends BaseBus
         $result = parent::updateById($id, $data);
         if ($result) {
             $adminUser = $this->getById($id);
-            session(config('code.session.admin'), $adminUser);
+            $sessionAdminUser = getSessionAdminUser();
+            $adminUser['authority'] = $sessionAdminUser['authority'];
+            setSessionAdminUser($adminUser);
         }
 
         return $result;
