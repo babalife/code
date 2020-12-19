@@ -28,9 +28,14 @@ class AdminUser extends BaseBus
     public function login($data)
     {
         // 判断用户是否存在
-        $adminUser = $this->getAdminUserNormalByUsername($data['username']);
-        if (empty($adminUser)) {
+        $adminUser = $this->getAdminUserByUsername($data['username']);
+        if (!$adminUser) {
             throw new Exception('该用户不存在');
+        }
+
+        // 判断用户是否可用
+        if ($adminUser['status'] != config('code.mysql.table_normal')) {
+            throw new Exception('账号已停用');
         }
 
         // 判断密码是否正确
