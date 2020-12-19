@@ -8,8 +8,8 @@ class Str
 {
 
     // 用户登录密码加密
-    public static function userEncrypt($password, $create_time)
+    public static function userEncrypt($password)
     {
-        return md5(md5($password . 'admin_user' . $create_time));
+        return md5(md5($password . 'admin_user'));
     }
 }

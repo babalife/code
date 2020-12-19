@@ -71,7 +71,12 @@ class User extends BaseAuth
         }
 
         // 用户表修改
-        $result = (new AdminUserBus())->updateById($id, $data);
+        try {
+            $result = (new AdminUserBus())->updateById($id, $data);
+        } catch (Exception $e) {
+            return Result::error($e->getMessage());
+        }
+
         if ($result) {
             return Result::success($result, '修改成功');
         }

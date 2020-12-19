@@ -183,13 +183,31 @@
                             if (res.code === 0) {
                                 obj.del();
                                 layer.close(index); //关闭弹层
+                                layer.msg(res.msg, {icon: 1});
+                                return;
                             }
-                            layer.msg(res.msg);
+                            layer.close(index); //关闭弹层
+                            layer.msg(res.msg, {icon: 2});
                         }
                     })
                 });
             } else if (obj.event === 'reset') { // 重置密码
-                console.log('reset')
+                layer.confirm('确定重置密码吗？', {icon: 3}, function (index) {
+                    $.ajax({
+                        url: '/admin/user/reset',
+                        type: 'post',
+                        data: {id: obj.data.id},
+                        success: function (res) {
+                            if (res.code === 0) {
+                                layer.close(index); //关闭弹层
+                                layer.msg(res.msg, {icon: 1});
+                                return;
+                            }
+                            layer.close(index); //关闭弹层
+                            layer.msg(res.msg, {icon: 2});
+                        }
+                    })
+                });
             }
         });
 
@@ -215,8 +233,11 @@
                                 if (res.code === 0) {
                                     insTb.reload();
                                     layer.close(index); //关闭弹层
+                                    layer.msg(res.msg, {icon: 1});
+                                    return;
                                 }
-                                layer.msg(res.msg, {icon: 1});
+                                layer.close(index); //关闭弹层
+                                layer.msg(res.msg, {icon: 2});
                             }
                         })
                     });
@@ -246,9 +267,9 @@
                             data: data.field,
                             success: function (res) {
                                 if (res.code === 0) {
+                                    insTb.reload();
                                     layer.msg(res.msg, {icon: 1});
                                     layer.close(dIndex);
-                                    insTb.reload();
                                     return;
                                 }
                                 layer.msg(res.msg, {icon: 2});

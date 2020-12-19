@@ -34,7 +34,7 @@ class AdminUser extends BaseBus
         }
 
         // 判断密码是否正确
-        if (Str::userEncrypt($data['password'], $adminUser['create_time']) != $adminUser['password']) {
+        if (Str::userEncrypt($data['password']) != $adminUser['password']) {
             throw new Exception('密码错误');
         }
 
@@ -67,9 +67,7 @@ class AdminUser extends BaseBus
         $this->model->startTrans();
 
         // 添加用户
-        $time = time();
-        $data['create_time'] = $time;
-        $data['password'] = Str::userEncrypt('123456', $time);
+        $data['password'] = Str::userEncrypt('123456');
         $result = $this->model->save($data);
         if (!$result) {
             $this->model->rollback();
@@ -95,6 +93,14 @@ class AdminUser extends BaseBus
     // 更新数据
     public function updateById($id, $data)
     {
+        if (isset($data['username'])) {
+            // 判断该用户是否存在
+            $adminUser = $this->getAdminUserByUsername($data['username']);
+            if ($adminUser && $adminUser['id'] != $id) {
+                throw new Exception('该账号已存在，请重新输入');
+            }
+        }
+
         // 修改角色关联
         if (isset($data['role_id'])) {
             (new AdminUserRoleBus())->updateById($id, ['role_id' => $data['role_id']]);
