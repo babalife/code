@@ -2,21 +2,24 @@
 
 
 namespace app\admin\controller;
+
+
 use app\admin\business\AdminUser as AdminUserBus;
 use app\admin\validate\AdminUser as AdminUserValidate;
 use app\common\basic\Result;
 use think\Exception;
 use think\facade\Request;
 
-//登录
-class Login extends Base
+class Auth extends Base
 {
-    public function index()
+    // 登录页
+    public function login()
     {
         return view();
     }
 
-    public function login()
+    // 登录
+    public function check()
     {
         $data = Request::only(['username', 'password'], 'post');
 
@@ -38,4 +41,10 @@ class Login extends Base
         return Result::error('登录失败');
     }
 
+    // 退出登录
+    public function logout()
+    {
+        setSessionAdminUser(null);
+        redirect(url('/admin/auth/login'))->send();
+    }
 }
