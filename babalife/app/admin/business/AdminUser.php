@@ -11,7 +11,7 @@
 namespace app\admin\business;
 
 use app\admin\model\AdminUser as AdminUserModel;
-use app\common\basic\Result;
+use app\admin\business\AdminUserRole as AdminUserRoleBus;
 use app\common\basic\Str;
 use think\Exception;
 use think\facade\Db;
@@ -60,10 +60,48 @@ class AdminUser extends BaseBus
         // 判断该用户是否存在
         $adminUser = $this->getAdminUserByUsername($data['username']);
         if ($adminUser) {
-            return Result::error('该账号已存在，请重新输入');
+            throw new Exception('该账号已存在，请重新输入');
         }
-        // 组装要记录的数据
+
+        // 事务开启
+        $this->model->startTrans();
+
+        // 添加用户
+        $time = time();
+        $data['create_time'] = $time;
+        $data['password'] = Str::userEncrypt('123456', $time);
+        $result = $this->model->save($data);
+        if (!$result) {
+            $this->model->rollback();
+            throw new Exception('添加用户失败');
+        }
+
         // 用户和角色关联建立关系
+        $insertData = [
+            'user_id' => $this->model->id,
+            'role_id' => $data['role_id']
+        ];
+        $result = (new AdminUserRoleBus())->insertDate($insertData);
+        if (!$result) {
+            $this->model->rollback();
+            throw new Exception('角色关联失败');
+        }
+
+        // 事务提交
+        $this->model->commit();
+        return true;
+    }
+
+    // 更新数据
+    public function updateById($id, $data)
+    {
+        // 修改角色关联
+        if (isset($data['role_id'])) {
+            (new AdminUserRoleBus())->updateById($id, ['role_id' => $data['role_id']]);
+            unset($data['role_id']);
+        }
+
+        return parent::updateById($id, $data);
     }
 
     // 根据账号查询用户信息
@@ -79,6 +117,8 @@ class AdminUser extends BaseBus
 
         return $result;
     }
+
+    // 根据账号查询正常用户信息
     public function getAdminUserNormalByUsername($username)
     {
         try {

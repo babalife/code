@@ -15,6 +15,7 @@ use app\admin\business\AdminUserRole as AdminUserRoleBus;
 use app\admin\validate\AdminUser as AdminUserValidate;
 use app\common\basic\Result;
 use app\common\basic\Str;
+use think\Exception;
 use think\facade\Request;
 
 class User extends BaseAuth
@@ -39,16 +40,20 @@ class User extends BaseAuth
     // 新增
     public function save()
     {
-        $data = Request::only(['id', 'username', 'nick_name', 'role_id', 'status'], 'post');
+        $data = Request::only(['username', 'nick_name', 'role_id'], 'post');
 
         $validate = new AdminUserValidate();
         if (!$validate->scene('save')->check($data)) {
             return Result::error($validate->getError());
         }
 
-        $result = (new AdminUserBus())->insertDate($data);
-        $roleResult = (new AdminUserRoleBus())->insertDate(['user_id' => $result, 'role_id' => $roleId]);
-        if ($result && $roleResult) {
+        try {
+            $result = (new AdminUserBus())->insertDate($data);
+        } catch (Exception $e) {
+            return Result::error($e->getMessage());
+        }
+
+        if ($result) {
             return Result::success([], '新增成功');
         }
 
@@ -58,8 +63,7 @@ class User extends BaseAuth
     // 修改
     public function update($id)
     {
-        $data = Request::only(['id', 'username', 'nick_name', 'status'], 'post');
-        $roleId = input('post.role_id');
+        $data = Request::only(['id', 'username', 'nick_name', 'status', 'role_id'], 'post');
 
         $validate = new AdminUserValidate();
         if (!$validate->scene('id')->check(['id' => $id])) {
@@ -68,10 +72,6 @@ class User extends BaseAuth
 
         // 用户表修改
         $result = (new AdminUserBus())->updateById($id, $data);
-        // 角色关联表修改
-        if ($roleId) {
-            $roleResult = (new AdminUserRoleBus())->updateById($id, ['role_id' => $roleId]);
-        }
         if ($result) {
             return Result::success($result, '修改成功');
         }
