@@ -13,4 +13,8 @@ namespace app\admin\model;
 
 class AdminUserRole extends BaseModel
 {
+    public function menu()
+    {
+        return $this->hasOne(AdminRoleMenu::class, 'role_id', 'role_id');
+    }
 }

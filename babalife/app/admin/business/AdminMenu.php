@@ -16,11 +16,32 @@ class AdminMenu extends BaseBus
         $this->model = new MenuModel();
     }
 
-    // 所有菜单查询
+    // 根据菜单ids查询菜单
+    public function getMenuNormalListsByMenuIds($filed = '*', $menuIds = '')
+    {
+        try {
+            $lists = $this->model
+                ->field($filed)
+                ->whereIn('id', $menuIds)
+                ->order('sort', 'asc')
+                ->where('status', 1)
+                ->select();
+        } catch (\Exception $e) {
+            $lists = [];
+        }
+
+        return $lists ? $lists->toArray() : $lists;
+    }
+
+    // 查询所有正常菜单
     public function getMenuNormalLists($filed = '*')
     {
         try {
-            $lists = $this->model->field($filed)->order('sort', 'asc')->where('status', 1)->select();
+            $lists = $this->model
+                ->field($filed)
+                ->order('sort', 'asc')
+                ->where('status', 1)
+                ->select();
         } catch (\Exception $e) {
             $lists = [];
         }

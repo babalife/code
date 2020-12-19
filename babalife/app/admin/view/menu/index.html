@@ -297,7 +297,9 @@
                         // }
                     });
                     // 渲染下拉树
-                    insTb.options.data.unshift({'name': '顶级菜单', 'id': 0});
+                    if (insTb.options.data[0].id !== 0) {
+                        insTb.options.data.unshift({'name': '顶级菜单', 'id': 0});
+                    }
                     var insXmSel = xmSelect.render({
                         el: '#authoritiesEditParentSel',
                         height: '250px',

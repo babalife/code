@@ -6,6 +6,7 @@ namespace app\admin\controller;
 use app\admin\business\AdminRole as AdminRoleBus;
 use app\admin\business\AdminRoleMenu as AdminRoleMenuBus;
 use app\admin\validate\AdminRole as AdminUserRoleValidate;
+use app\admin\business\AdminMenu as AdminMenuBus;
 use app\common\basic\Result;
 use think\facade\Request;
 
@@ -32,7 +33,7 @@ class Role extends BaseAuth
     // 列表数据查询
     public function list()
     {
-        $result = (new AdminRoleBus())->getList('id','asc','name, id as value');
+        $result = (new AdminRoleBus())->getList('id', 'asc', 'name, id as value');
         if ($result) {
             return Result::success($result);
         }
@@ -64,7 +65,7 @@ class Role extends BaseAuth
         $data = Request::only(['name', 'desc'], 'post');
 
         $validate = new AdminUserRoleValidate();
-        if (!$validate->scene('update')->check(['id' => $id, 'name'=>$data['name']])) {
+        if (!$validate->scene('update')->check(['id' => $id, 'name' => $data['name']])) {
             return Result::error($validate->getError());
         }
 
@@ -126,5 +127,15 @@ class Role extends BaseAuth
         }
 
         return Result::error('操作失败');
+    }
+
+    /**
+     *  菜单tree列表
+     */
+    public function treeList()
+    {
+        $id = input('param.id');
+        $list = (new AdminMenuBus())->treeList($id);
+        return Result::success($list);
     }
 }

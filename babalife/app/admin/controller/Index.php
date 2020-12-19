@@ -3,6 +3,7 @@
 namespace app\admin\controller;
 
 use app\admin\business\AdminMenu as MenuBus;
+use app\admin\business\AdminRoleMenu as AdminRoleMenuBus;
 use app\common\basic\Arr;
 
 class Index extends BaseAuth
@@ -29,8 +30,26 @@ class Index extends BaseAuth
             ]
         ];
 
+
         // 左侧菜单数据
-        $menuInfo = Arr::getTree((new MenuBus())->getMenuNormalLists());
+        $menuList = [];
+
+        // 根据角色id，查询菜单
+        $roleMenu = (new AdminRoleMenuBus())->getMenuIds();
+        if (isset($roleMenu['menu']['menu_ids'])) {
+
+            // 存储菜单权限
+//            $menuList = (new MenuBus())->getNormalByIds($roleMenu['menu']['menu_ids']);
+//            halt($menuList);
+
+            $menuList = (new MenuBus())->getMenuNormalListsByMenuIds('*', $roleMenu['menu']['menu_ids']);
+            $adminUser = session(config('code.session.admin'));
+            $adminUser['authority'] = array_column($menuList, 'authority');
+            session(config('code.session.admin'), $adminUser);
+        }
+
+        // 得到菜单树
+        $menuInfo = Arr::getTree($menuList);
 
         return view('', [
             'homeInfo' => $homeInfo,

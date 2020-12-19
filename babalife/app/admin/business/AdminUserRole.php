@@ -12,6 +12,17 @@ class AdminUserRole extends BaseBus
         $this->model = (new AdminUserRoleModel());
     }
 
+    public function getById($id, $field = '*')
+    {
+        try {
+            $result = $this->model->where('user_id', $id)->find();
+        } catch (\Exception $e) {
+            $result = [];
+        }
+
+        return $result;
+    }
+
     // 重写
     public function updateById($id, $data)
     {
@@ -45,6 +56,17 @@ class AdminUserRole extends BaseBus
             $result = [];
         }
 
+        return $result;
+    }
+
+    // 根据用户id，查菜单Ids
+    public function getMenuIdsByUserId($userId)
+    {
+        try {
+            $result = $this->model->with('menu')->where('user_id', $userId)->find();
+        } catch (\Exception $e) {
+            $result = [];
+        }
         return $result;
     }
 }

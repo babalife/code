@@ -48,4 +48,11 @@ class AdminRoleMenu extends BaseBus
 
         return $result;
     }
+
+    // 得到登录的角色菜单ids
+    public function getMenuIds()
+    {
+        $adminUser =  session(config('code.session.admin'));
+        return (new AdminUserRole())->getMenuIdsByUserId($adminUser['id']);
+    }
 }

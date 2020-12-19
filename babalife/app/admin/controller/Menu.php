@@ -105,14 +105,4 @@ class Menu extends BaseAuth
 
         return Result::error('删除失败');
     }
-
-    /**
-     *  菜单tree列表
-     */
-    public function treeList()
-    {
-        $id = input('param.id');
-        $list = (new AdminMenuBus())->treeList($id);
-        return Result::success($list);
-    }
 }
