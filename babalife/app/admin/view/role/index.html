@@ -12,12 +12,19 @@
 <div class="layui-fluid">
     <div class="layui-card">
         <div class="layui-card-body">
-            <div style="padding-bottom: 10px;">
-                <button class="layui-btn layuiadmin-btn-role" data-type="batchdel">删除</button>
-                <button class="layui-btn layuiadmin-btn-role" data-type="add">添加</button>
-            </div>
-
             <table id="LAY-user-back-role" lay-filter="LAY-user-back-role"></table>
+
+            <!-- 表头工具条 -->
+            <script type="text/html" id="table-admin-toolbar">
+                <p>
+                    <button lay-event="add" class="layui-btn layui-btn-sm icon-btn">
+                        <i class="layui-icon">&#xe654;</i>添加
+                    </button>&nbsp;
+                    <button lay-event="del" class="layui-btn layui-btn-sm layui-btn-danger icon-btn">
+                        <i class="layui-icon">&#xe640;</i>删除
+                    </button>
+                </p>
+            </script>
         </div>
     </div>
 </div>
@@ -85,6 +92,8 @@
             elem: '#LAY-user-back-role'
             , url: '/admin/role/pageList'
             , page: true //开启分页
+            // 头部工具栏左侧自定义工具条
+            , toolbar: '#table-admin-toolbar'
             , parseData: function (res) { //res 即为原始返回的数据
                 return {
                     "code": res.code, //解析接口状态
@@ -101,42 +110,6 @@
                 , {title: '操作', width: 200, align: 'center', fixed: 'right', toolbar: '#roleTbBar'}
             ]]
             , text: '对不起，加载出现异常！'
-        });
-
-        //事件
-        var active = {
-            batchdel: function () {
-                var checkStatus = table.checkStatus('LAY-user-back-role')
-                var checkRows = checkStatus.data;
-                if (checkRows.length === 0) {
-                    layer.msg('请选择要删除的数据', {icon: 2});
-                    return;
-                }
-                var ids = checkRows.map((item) => item.id).join(',');
-                layer.confirm('确定删除吗？', {icon: 2, title: '警告'}, function (index) {
-                    $.ajax({
-                        url: '/admin/role',
-                        type: 'delete',
-                        data: {ids},
-                        success: function (res) {
-                            if (res.code === 0) {
-                                roleTable.reload(); //数据刷新
-                                layer.close(index); //关闭弹层
-                                layer.msg(res.msg, {icon: 1});
-                                return;
-                            }
-                            layer.msg(res.msg, {icon: 2});
-                        }
-                    })
-                });
-            },
-            add: function () {
-                showEditModel();
-            }
-        }
-        $('.layui-btn.layuiadmin-btn-role').on('click', function () {
-            var type = $(this).data('type');
-            active[type] ? active[type].call(this) : '';
         });
 
         //监听工具条
@@ -163,6 +136,40 @@
                 showEditModel(data);
             } else if (obj.event === 'auth') {
                 showRoleEditModel(data);
+            }
+        });
+
+        /* 表格头工具栏点击事件 */
+        table.on('toolbar(LAY-user-back-role)', function (obj) {
+            switch (obj.event) {
+                case 'add': //添加
+                    showEditModel();
+                    break;
+                case 'del': //删除
+                    var checkStatus = table.checkStatus('LAY-user-back-role')
+                    var checkRows = checkStatus.data;
+                    if (checkRows.length === 0) {
+                        layer.msg('请选择要删除的数据', {icon: 2});
+                        return;
+                    }
+                    var ids = checkRows.map((item) => item.id).join(',');
+                    layer.confirm('确定删除吗？', {icon: 2, title: '警告'}, function (index) {
+                        $.ajax({
+                            url: '/admin/role',
+                            type: 'delete',
+                            data: {ids},
+                            success: function (res) {
+                                if (res.code === 0) {
+                                    roleTable.reload(); //数据刷新
+                                    layer.close(index); //关闭弹层
+                                    layer.msg(res.msg, {icon: 1});
+                                    return;
+                                }
+                                layer.msg(res.msg, {icon: 2});
+                            }
+                        })
+                    });
+                    break;
             }
         });
 
