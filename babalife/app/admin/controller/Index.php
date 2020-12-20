@@ -24,7 +24,7 @@ class Index extends BaseAuth
             'name' => $this->user['nick_name'],
             // 菜单，可设置上下分割线，top_line/bottom_line
             'menu' => [
-                ['name' => '基本资料', 'path' => '/admin/user/index'],
+                ['name' => '修改密码', 'path' => '/admin/user/password'],
                 ['name' => '菜单管理', 'path' => '/admin/menu/index'],
                 ['name' => '退出', 'path' => '/admin/auth/logout', 'top_line' => true],
             ]

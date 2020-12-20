@@ -25,6 +25,40 @@ class User extends BaseAuth
         return view();
     }
 
+    // 渲染修改密码页
+    public function password()
+    {
+        return view();
+    }
+
+    // 设置密码
+    public function setpass()
+    {
+        $data = Request::only(['oldPassword', 'password', 'repassword'], 'post');
+
+        $validate = new AdminUserValidate();
+        if (!$validate->scene('setpass')->check($data)) {
+            return Result::error($validate->getError());
+        }
+
+        $adminUser = getSessionAdminUser();
+        // 校验原密码
+        if (Str::userEncrypt($data['oldPassword']) !== $adminUser['password']) {
+            return Result::error('原密码不正确，请重新输入');
+        }
+
+        try {
+            $result = (new AdminUserBus())->updateById($adminUser['id'], ['password' => Str::userEncrypt($data['password'])]);
+        } catch (Exception $e) {
+            return Result::error($e->getMessage());
+        }
+        if ($result) {
+            return Result::success([], '修改密码成功');
+        }
+
+        return Result::error('修改密码失败');
+    }
+
     // 查询用户
     public function pageList()
     {
@@ -127,12 +161,14 @@ class User extends BaseAuth
             return Result::error($validate->getError());
         }
 
-        $time = time();
         $updateData = [
-            'create_time' => $time,
-            'password' => Str::userEncrypt('123456', $time)
+            'password' => Str::userEncrypt('123456')
         ];
-        $result = (new AdminUserBus())->updateById($id,$updateData);
+        try {
+            $result = (new AdminUserBus())->updateById($id, $updateData);
+        } catch (Exception $e) {
+            return Result::error($e->getMessage());
+        }
         if ($result) {
             return Result::success([], '重置成功');
         }

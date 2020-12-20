@@ -132,21 +132,21 @@ layui.define(['form', 'upload'], function(exports){
   
   
   //设置密码
-  form.on('submit(setmypass)', function(obj){
-    layer.msg(JSON.stringify(obj.field));
-    
-    //提交修改
-    /*
-    admin.req({
-      url: ''
-      ,data: obj.field
-      ,success: function(){
-        
-      }
-    });
-    */
-    return false;
-  });
+  // form.on('submit(setmypass)', function(obj){
+  //   layer.msg(JSON.stringify(obj.field));
+  //
+  //   //提交修改
+  //   /*
+  //   admin.req({
+  //     url: ''
+  //     ,data: obj.field
+  //     ,success: function(){
+  //
+  //     }
+  //   });
+  //   */
+  //   return false;
+  // });
   
   //对外暴露的接口
   exports('set', {});

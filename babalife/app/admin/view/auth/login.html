@@ -348,11 +348,11 @@
         form.on('submit(login)', function (data) {
             data = data.field;
             if (data.username == '') {
-                layer.msg('用户名不能为空');
+                layer.msg('用户名不能为空', {icon: 2});
                 return false;
             }
             if (data.password == '') {
-                layer.msg('密码不能为空');
+                layer.msg('密码不能为空', {icon: 2});
                 return false;
             }
             $.ajax({
@@ -361,13 +361,13 @@
                 data,
                 success: function (res) {
                     if (res.code === 0) {
-                        layer.msg('登录成功', function () {
+                        layer.msg('登录成功', {icon: 1}, function () {
                             window.location = "{:url('/admin/index')}";
                         });
                         return;
                     }
 
-                    layer.msg(res.msg);
+                    layer.msg(res.msg, {icon: 2});
                 }
             })
 
