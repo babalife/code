@@ -25,10 +25,13 @@ class Index extends BaseAuth
             // 菜单，可设置上下分割线，top_line/bottom_line
             'menu' => [
                 ['name' => '修改密码', 'path' => '/admin/user/password'],
-                ['name' => '菜单管理', 'path' => '/admin/menu/index'],
                 ['name' => '退出', 'path' => '/admin/auth/logout', 'top_line' => true],
             ]
         ];
+
+        if (env('app_debug')) {
+            array_unshift($headInfo['menu'], ['name' => '菜单管理', 'path' => '/admin/menu/index']);
+        }
 
 
         // 左侧菜单数据

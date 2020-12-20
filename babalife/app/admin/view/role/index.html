@@ -63,7 +63,7 @@
 <script type="text/html" id="roleAssignDialog">
     <form id="roleAssignEditForm" lay-filter="roleAssignEditForm" class="layui-form model-form"
           style="height: 100%; padding: 10px 10px 0 10px;">
-        <div class="layui-form-item" style="height: 78%; overflow: scroll; border-bottom: 1px solid #e6e6e6;">
+        <div class="layui-form-item" style="height: 78%; overflow-y: scroll; border-bottom: 1px solid #e6e6e6;">
             <div id="role-tree" style="padding-bottom: 20px"></div>
         </div>
 
@@ -216,6 +216,8 @@
                         layer.close(loadIndex);
                         return false;
                     });
+                    // 弹窗不出现滚动条
+                    $(layero).children('.layui-layer-content').css('overflow', 'visible');
                 }
             });
         }
