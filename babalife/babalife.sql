@@ -11,7 +11,7 @@
  Target Server Version : 50728
  File Encoding         : 65001
 
- Date: 16/12/2020 22:44:58
+ Date: 21/12/2020 02:31:43
 */
 
 SET NAMES utf8mb4;
@@ -35,18 +35,17 @@ CREATE TABLE `admin_menu`  (
   `authority` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '权限标识',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `id`(`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 75 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '后台菜单表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 79 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '后台菜单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of admin_menu
 -- ----------------------------
-INSERT INTO `admin_menu` VALUES (27, 0, '系统管理', 'layui-icon-set', '', 1, 0, 1607671475, 1607858082, 0, '');
-INSERT INTO `admin_menu` VALUES (30, 27, '角色管理', 'layui-icon-username', '/admin/role/index', 1, 0, 1607671930, 1607907721, 0, '');
-INSERT INTO `admin_menu` VALUES (32, 27, '菜单管理', 'layui-icon-menu-fill', '/admin/menu', 1, 0, 1607860767, 1608124318, 0, 'menu');
-INSERT INTO `admin_menu` VALUES (71, 32, '菜单添加', '', '', 1, 0, 1607920488, 1608124319, 1, 'menu:add');
-INSERT INTO `admin_menu` VALUES (72, 32, '菜单删除', '', '', 1, 0, 1607920497, 1608124320, 1, 'menu:delete');
-INSERT INTO `admin_menu` VALUES (73, 32, '菜单更新', '', '', 1, 0, 1607920526, 1607923492, 1, 'menu:update');
-INSERT INTO `admin_menu` VALUES (74, 27, '用户管理', 'layui-icon-user', '/admin/user', 1, 0, 1607990710, 1607990736, 0, 'user');
+INSERT INTO `admin_menu` VALUES (27, 0, '系统管理', 'layui-icon-set', '', 1, 255, 1607671475, 1608476472, 0, '');
+INSERT INTO `admin_menu` VALUES (30, 27, '角色管理', 'layui-icon-username', '/admin/role/index', 1, 1, 1607671930, 1608483217, 0, 'role');
+INSERT INTO `admin_menu` VALUES (74, 27, '用户管理', 'layui-icon-user', '/admin/user', 1, 0, 1607990710, 1608392821, 0, 'user');
+INSERT INTO `admin_menu` VALUES (75, 27, '菜单管理', 'layui-icon-menu-fill', '/admin/menu/index', 1, 2, 1608212289, 1608212365, 0, 'menu');
+INSERT INTO `admin_menu` VALUES (76, 0, '答题管理', 'layui-icon-file-b', '/admin/answer', 1, 1, 1608474962, 1608483408, 0, '');
+INSERT INTO `admin_menu` VALUES (78, 0, '考试管理', 'layui-icon-template-1', '/admin/paper', 1, 0, 1608475934, 1608476396, 0, '');
 
 -- ----------------------------
 -- Table structure for admin_role
@@ -59,14 +58,13 @@ CREATE TABLE `admin_role`  (
   `create_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_time` int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '后台用户角色' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '后台用户角色' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of admin_role
 -- ----------------------------
-INSERT INTO `admin_role` VALUES (3, '超级管理员', '不知道', 1607859043, 1608124024);
-INSERT INTO `admin_role` VALUES (8, '测试角色', '拥有至高无上的权利', 1607860391, 1608128289);
-INSERT INTO `admin_role` VALUES (9, '张国荣', '演员', 1607923824, 1607923824);
+INSERT INTO `admin_role` VALUES (1, '超级管理员', '拥有至高无上的权利', 1608474097, 1608474097);
+INSERT INTO `admin_role` VALUES (5, 'test', '测试角色', 1608476899, 1608477226);
 
 -- ----------------------------
 -- Table structure for admin_role_menu
@@ -77,14 +75,13 @@ CREATE TABLE `admin_role_menu`  (
   `role_id` int(10) UNSIGNED NOT NULL COMMENT '角色ID',
   `menu_ids` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '菜单IDS',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '角色菜单关联表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '角色菜单关联表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of admin_role_menu
 -- ----------------------------
-INSERT INTO `admin_role_menu` VALUES (1, 3, '27,32,72,73');
-INSERT INTO `admin_role_menu` VALUES (2, 8, '27,32,72,73');
-INSERT INTO `admin_role_menu` VALUES (3, 9, '27,32,71');
+INSERT INTO `admin_role_menu` VALUES (1, 1, '27,30,74,75,76,78');
+INSERT INTO `admin_role_menu` VALUES (5, 5, '78,76');
 
 -- ----------------------------
 -- Table structure for admin_user
@@ -93,7 +90,7 @@ DROP TABLE IF EXISTS `admin_user`;
 CREATE TABLE `admin_user`  (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '管理员账号',
-  `password` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '管理员密码',
+  `password` char(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '管理员密码',
   `nick_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '管理员名称',
   `last_login_ip` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '最后一次登录ip',
   `last_login_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '最后一次登录时间',
@@ -101,13 +98,13 @@ CREATE TABLE `admin_user`  (
   `create_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `update_time` int(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '后台用户表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '后台用户表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of admin_user
 -- ----------------------------
-INSERT INTO `admin_user` VALUES (10, 'admin', 'c3284d0f94606de1fd2af172aba15bf3', '123', '127.0.0.1', 0, 1, 1608129334, 1608129706);
-INSERT INTO `admin_user` VALUES (11, '啊啊啊', 'c3284d0f94606de1fd2af172aba15bf3', 'aa', '127.0.0.1', 0, 1, 1608129354, 1608129354);
+INSERT INTO `admin_user` VALUES (1, 'admin', 'bf5c8a5cc5c8fbb73559e1e1f677ad3e', 'admin', '127.0.0.1', 1608483095, 1, 1608383449, 1608483095);
+INSERT INTO `admin_user` VALUES (5, 'test', '091fa6351d75d5e9d225348b8749d430', 'test', '127.0.0.1', 1608476918, 1, 1608476895, 1608477169);
 
 -- ----------------------------
 -- Table structure for admin_user_role
@@ -121,11 +118,11 @@ CREATE TABLE `admin_user_role`  (
 -- ----------------------------
 -- Records of admin_user_role
 -- ----------------------------
-INSERT INTO `admin_user_role` VALUES (1, 8);
-INSERT INTO `admin_user_role` VALUES (7, 9);
-INSERT INTO `admin_user_role` VALUES (8, 3);
-INSERT INTO `admin_user_role` VALUES (9, 3);
-INSERT INTO `admin_user_role` VALUES (10, 8);
-INSERT INTO `admin_user_role` VALUES (11, 3);
+INSERT INTO `admin_user_role` VALUES (1, 1);
+INSERT INTO `admin_user_role` VALUES (2, 1);
+INSERT INTO `admin_user_role` VALUES (2, 1);
+INSERT INTO `admin_user_role` VALUES (3, 1);
+INSERT INTO `admin_user_role` VALUES (4, 1);
+INSERT INTO `admin_user_role` VALUES (5, 5);
 
 SET FOREIGN_KEY_CHECKS = 1;
