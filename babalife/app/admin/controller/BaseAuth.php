@@ -45,6 +45,12 @@ class BaseAuth extends Base
     // 菜单权限校验
     public function isMenu()
     {
+        // 判断是否登录
+        $adminUser = getSessionAdminUser();
+        if (empty($adminUser)) {
+            exit('请先登录');
+        }
+
         // 默认超级用户角色，不校验
         $result = (new AdminUserRoleBus())->getById($this->user['id']);
         if ($result['role_id'] == '1') {
