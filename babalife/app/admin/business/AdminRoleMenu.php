@@ -11,7 +11,8 @@
 namespace app\admin\business;
 
 use app\admin\model\AdminRoleMenu as AdminRoleMenuModel;
-use function mysql_xdevapi\getSession;
+use app\admin\business\AdminMenu as AdminMenuBus;
+use think\facade\Log;
 
 class AdminRoleMenu extends BaseBus
 {
@@ -55,5 +56,17 @@ class AdminRoleMenu extends BaseBus
     {
         $adminUser = getSessionAdminUser();
         return (new AdminUserRole())->getMenuIdsByUserId($adminUser['id']);
+    }
+
+    // 更新默认角色ids
+    public function updateDefaultUserIds()
+    {
+        try {
+            $list = (new AdminMenuBus())->getList();
+            $ids = implode(',',array_column($list, 'id'));
+            $this->setRoleMenu(['role_id' => 1, 'menu_ids' => $ids]);
+        } catch (\Exception $e) {
+            Log::error('同步更新默认角色菜单失败');
+        }
     }
 }

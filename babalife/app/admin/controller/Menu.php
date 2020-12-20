@@ -5,6 +5,7 @@ namespace app\admin\controller;
 
 use app\admin\validate\AdminMenu as MenuValidate;
 use app\admin\business\AdminMenu as AdminMenuBus;
+use app\admin\business\AdminRoleMenu as AdminRoleMenuBus;
 use app\common\basic\Result;
 use think\facade\Request;
 
@@ -48,6 +49,8 @@ class Menu extends BaseAuth
 
         $result = (new AdminMenuBus())->insertDate($data);
         if ($result) {
+            // 同步更新默认角色菜单
+            (new AdminRoleMenuBus())->updateDefaultUserIds();
             return Result::success([], '新增成功');
         }
 
@@ -66,6 +69,8 @@ class Menu extends BaseAuth
 
         $result = (new AdminMenuBus())->updateById($id, $data);
         if ($result) {
+            // 同步更新默认角色菜单
+            (new AdminRoleMenuBus())->updateDefaultUserIds();
             return Result::success($result, '修改成功');
         }
 
@@ -82,6 +87,8 @@ class Menu extends BaseAuth
 
         $result = (new AdminMenuBus())->delById($id);
         if ($result) {
+            // 同步更新默认角色菜单
+            (new AdminRoleMenuBus())->updateDefaultUserIds();
             return Result::success([], '删除成功');
         }
 
@@ -100,6 +107,8 @@ class Menu extends BaseAuth
 
         $result = (new AdminMenuBus())->delByIds($ids);
         if ($result) {
+            // 同步更新默认角色菜单
+            (new AdminRoleMenuBus())->updateDefaultUserIds();
             return Result::success([], '删除成功');
         }
 
