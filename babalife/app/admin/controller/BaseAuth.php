@@ -2,11 +2,9 @@
 
 
 namespace app\admin\controller;
+use app\admin\business\AdminUserRole as AdminUserRoleBus;
 
 // 鉴权控制器
-use think\Exception;
-use think\facade\Db;
-
 class BaseAuth extends Base
 {
     protected $user = null;
@@ -47,6 +45,12 @@ class BaseAuth extends Base
     // 菜单权限校验
     public function isMenu()
     {
+        // 默认超级用户角色，不校验
+        $result = (new AdminUserRoleBus())->getById($this->user['id']);
+        if ($result['role_id'] == '1') {
+            return;
+        }
+
         $menu = strtolower(request()->controller());
         if (!in_array($menu, $this->menu_white) && !in_array($menu, $this->user['authority'])) {
             echo '无权限访问';
